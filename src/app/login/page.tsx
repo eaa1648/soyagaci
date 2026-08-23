@@ -26,6 +26,7 @@ export default function LoginPage() {
         id: `u-${Date.now()}`,
         name: email.split('@')[0],
         email: email,
+        familyName: `${email.split('@')[0]} Ailesi`,
         role: 'user',
         roleLabel: 'Aile Üyesi',
         credits: 100

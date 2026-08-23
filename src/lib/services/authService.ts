@@ -2,6 +2,7 @@ export interface UserProfile {
   id: string;
   name: string;
   email: string;
+  familyName: string; // e.g. "Yılmaz Ailesi", "Kaya Ailesi"
   role: 'platform_admin' | 'family_admin' | 'user';
   roleLabel: string;
   credits: number;
@@ -9,12 +10,13 @@ export interface UserProfile {
 
 export const DEMO_ACCOUNTS: { [key: string]: { email: string; pass: string; profile: UserProfile } } = {
   admin: {
-    email: 'admin@yilmaz.com',
+    email: 'admin@secere.app',
     pass: 'admin123',
     profile: {
       id: 'admin-1',
       name: 'Yönetici (Platform Admin)',
-      email: 'admin@yilmaz.com',
+      email: 'admin@secere.app',
+      familyName: 'Yılmaz Ailesi',
       role: 'platform_admin',
       roleLabel: 'Platform Yöneticisi',
       credits: 9999
@@ -27,6 +29,7 @@ export const DEMO_ACCOUNTS: { [key: string]: { email: string; pass: string; prof
       id: '3',
       name: 'Ali Yılmaz',
       email: 'ali@yilmaz.com',
+      familyName: 'Yılmaz Ailesi',
       role: 'family_admin',
       roleLabel: 'Aile Yöneticisi',
       credits: 550
@@ -39,6 +42,7 @@ export const DEMO_ACCOUNTS: { [key: string]: { email: string; pass: string; prof
       id: '5',
       name: 'Ahmet Yılmaz',
       email: 'ahmet@yilmaz.com',
+      familyName: 'Yılmaz Ailesi',
       role: 'user',
       roleLabel: 'Aile Üyesi',
       credits: 100
@@ -46,9 +50,9 @@ export const DEMO_ACCOUNTS: { [key: string]: { email: string; pass: string; prof
   }
 };
 
-export function getCurrentUser(): UserProfile {
+export function getCurrentUser(): UserProfile | null {
   if (typeof window === 'undefined') {
-    return DEMO_ACCOUNTS.member.profile;
+    return null;
   }
   const stored = localStorage.getItem('active_user_session');
   if (stored) {
@@ -56,17 +60,27 @@ export function getCurrentUser(): UserProfile {
       return JSON.parse(stored);
     } catch {}
   }
-  return DEMO_ACCOUNTS.member.profile;
+  return null;
 }
 
 export function setCurrentUser(user: UserProfile) {
   if (typeof window !== 'undefined') {
     localStorage.setItem('active_user_session', JSON.stringify(user));
+    window.dispatchEvent(new Event('storage'));
+  }
+}
+
+export function updateFamilyName(newFamilyName: string) {
+  const current = getCurrentUser();
+  if (current) {
+    current.familyName = newFamilyName;
+    setCurrentUser(current);
   }
 }
 
 export function logoutUser() {
   if (typeof window !== 'undefined') {
     localStorage.removeItem('active_user_session');
+    window.dispatchEvent(new Event('storage'));
   }
 }
