@@ -1,0 +1,56 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // YARDIMCI FONKSİYONLAR
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isPlatformAdmin() {
+      return isAuthenticated() && request.auth.token.role == 'platform_admin';
+    }
+    
+    function isFamilyAdmin(familyId) {
+      return isAuthenticated() && (request.auth.token.role == 'platform_admin' || request.auth.token.familyAdmin == familyId);
+    }
+    
+    function isFamilyMember(familyId) {
+      return isAuthenticated() && request.auth.token.familyId == familyId;
+    }
+
+    // USERS (Kullanıcılar)
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow write: if isPlatformAdmin() || request.auth.uid == userId;
+    }
+
+    // FAMILIES (Aileler)
+    match /families/{familyId} {
+      allow read: if isFamilyMember(familyId) || isPlatformAdmin();
+      allow write: if isPlatformAdmin();
+      
+      // Ailenin içindeki kişiler (Nodes)
+      match /nodes/{nodeId} {
+        allow read: if isFamilyMember(familyId) || isPlatformAdmin();
+        allow create, update: if isFamilyMember(familyId) || isPlatformAdmin();
+        allow delete: if isFamilyAdmin(familyId); // Sadece yöneticiler kişi silebilir
+      }
+      
+      // Ailenin içindeki medya dosyalarının metadata'sı
+      match /media/{mediaId} {
+        allow read: if isFamilyMember(familyId) || isPlatformAdmin();
+        allow create: if isFamilyMember(familyId) || isPlatformAdmin();
+        allow update, delete: if isFamilyAdmin(familyId) || resource.data.uploadedBy == request.auth.uid;
+      }
+    }
+    
+    // CREDIT TRANSACTIONS
+    match /credit_transactions/{txId} {
+      allow read: if isPlatformAdmin() || resource.data.userId == request.auth.uid;
+      allow write: if false; // Sadece backend/cloud functions üzerinden yazılabilir
+    }
+
+  }
+}

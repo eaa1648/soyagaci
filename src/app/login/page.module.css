@@ -1,0 +1,148 @@
+.container {
+  min-height: calc(100vh - 72px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+}
+
+.authWrapper {
+  width: 100%;
+  max-width: 980px;
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: var(--shadow-lg), 0 0 50px -10px rgba(99, 102, 241, 0.25);
+  background: var(--bg-surface-solid);
+}
+
+.visualSide {
+  padding: 48px;
+  background: radial-gradient(circle at 0% 0%, rgba(99, 102, 241, 0.3) 0%, rgba(15, 23, 42, 0.95) 80%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-right: 1px solid var(--border-color);
+  position: relative;
+}
+
+.quoteBadge {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--accent-gold);
+  margin-bottom: 20px;
+}
+
+.quoteTitle {
+  font-family: var(--font-serif);
+  font-size: 1.8rem;
+  line-height: 1.35;
+  color: #ffffff;
+  margin: 0 0 16px 0;
+}
+
+.quoteSub {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 32px;
+}
+
+.vintageStamps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.vintageStamps span {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+}
+
+/* Login Card */
+.loginCard {
+  padding: 48px;
+  background: rgba(15, 23, 42, 0.85);
+  border: none;
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.header {
+  margin-bottom: 28px;
+}
+
+.logoBadge {
+  font-size: 2.2rem;
+  margin-bottom: 12px;
+}
+
+.title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  margin: 0 0 6px 0;
+  color: #ffffff;
+}
+
+.subtitle {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.demoLoginBtn {
+  width: 100%;
+  padding: 12px;
+  border-radius: var(--radius-full);
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  color: var(--accent-gold);
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.demoLoginBtn:hover {
+  background: rgba(245, 158, 11, 0.25);
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+.footer {
+  margin-top: 24px;
+  text-align: center;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+}
+
+.link {
+  color: var(--brand-primary-hover);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+@media (max-width: 840px) {
+  .authWrapper {
+    grid-template-columns: 1fr;
+  }
+  .visualSide {
+    display: none;
+  }
+}
