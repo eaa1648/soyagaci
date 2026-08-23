@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './page.module.css';
 import { PersonCard } from '@/components/person/PersonCard';
 import { AdBanner } from '@/components/ads/AdBanner';
 import { Card } from '@/components/ui/card';
 import Link from 'next/link';
+import { getPersons, PersonRecord, SEED_PERSONS } from '@/lib/services/personService';
 import { 
   Users, 
   FileText, 
@@ -20,27 +21,26 @@ import {
 } from 'lucide-react';
 
 const FAMILY_BRANCHES = [
-  { id: 'all', label: 'Tüm Aile (48)' },
+  { id: 'all', label: 'Tüm Aile' },
   { id: 'bursa', label: 'Bursa Kökü (1. & 2. Kuşak)' },
   { id: 'istanbul', label: 'İstanbul Kolu (3. Kuşak)' },
   { id: 'izmir', label: 'İzmir Kolu' },
 ];
 
 export default function Home() {
+  const [persons, setPersons] = useState<PersonRecord[]>(SEED_PERSONS);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedBranch, setSelectedBranch] = useState('all');
 
-  const ALL_PERSONS = [
-    { id: '1', name: 'Mustafa Yılmaz', birthYear: 1940, deathYear: 2012, birthPlace: 'Bursa / Heykel', isLiving: false, job: 'Başöğretmen', branch: 'bursa', generation: '1. Kuşak', hasAudio: true },
-    { id: '2', name: 'Ayşe Yılmaz (Demir)', birthYear: 1945, birthPlace: 'Bursa / Çekirge', isLiving: true, job: 'Emekli Terzi & İpek Nakış', branch: 'bursa', generation: '1. Kuşak', hasAudio: true },
-    { id: '3', name: 'Ali Yılmaz', birthYear: 1970, birthPlace: 'Bursa', isLiving: true, job: 'Yüksek İnşaat Mühendisi', branch: 'istanbul', generation: '2. Kuşak', hasAudio: true },
-    { id: '4', name: 'Zeynep Yılmaz (Kaya)', birthYear: 1975, birthPlace: 'Bursa', isLiving: true, job: 'Mimar & Akademisyen', branch: 'izmir', generation: '2. Kuşak', hasAudio: false },
-    { id: '5', name: 'Ahmet Yılmaz', birthYear: 1998, birthPlace: 'İstanbul / Kadıköy', isLiving: true, job: 'Yazılım Mühendisi', branch: 'istanbul', generation: '3. Kuşak', hasAudio: false },
-    { id: '6', name: 'Elif Yılmaz', birthYear: 2004, birthPlace: 'İstanbul', isLiving: true, job: 'Grafik Tasarım Öğrencisi', branch: 'istanbul', generation: '3. Kuşak', hasAudio: false },
-    { id: '7', name: 'Can Kaya', birthYear: 2008, birthPlace: 'İzmir / Alsancak', isLiving: true, job: 'Lise Öğrencisi', branch: 'izmir', generation: '3. Kuşak', hasAudio: false },
-  ];
+  useEffect(() => {
+    getPersons().then(data => {
+      if (data && data.length > 0) {
+        setPersons(data);
+      }
+    });
+  }, []);
 
-  const filteredPersons = ALL_PERSONS.filter(p => {
+  const filteredPersons = persons.filter(p => {
     const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           p.job.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           p.birthPlace.toLowerCase().includes(searchQuery.toLowerCase());
@@ -111,7 +111,7 @@ export default function Home() {
               <span className={styles.metricLabel}>Kayıtlı Fert</span>
               <Users size={16} className={styles.metricIcon} />
             </div>
-            <div className={styles.metricValue}>48</div>
+            <div className={styles.metricValue}>{persons.length}</div>
             <div className={styles.metricFooter}>5 kuşak boyunca</div>
           </Card>
 
