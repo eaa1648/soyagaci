@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { GitMerge, Sparkles, Check, AlertTriangle, ArrowRightLeft } from 'lucide-react';
 
 export default function MergeToolPage() {
   const [merged, setMerged] = useState(false);
@@ -11,81 +11,95 @@ export default function MergeToolPage() {
     <div>
       
       {/* Header */}
-      <div style={{ marginBottom: '28px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-          <span style={{ fontSize: '0.75rem', fontWeight: 800, padding: '2px 8px', borderRadius: '9999px', background: 'linear-gradient(135deg, #ec4899, #8b5cf6)', color: '#fff' }}>GEMINI AI ANALİZİ</span>
+      <div style={{ marginBottom: '24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+          <Sparkles size={14} style={{ color: 'var(--brand-primary)' }} />
+          <span style={{ fontSize: '0.74rem', fontWeight: 600, color: 'var(--brand-primary)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>YAPAY ZEKÂ ANALİZİ</span>
         </div>
-        <h1 style={{ fontSize: '2rem', fontWeight: 800, margin: '0 0 6px 0', color: '#ffffff' }}>🔀 Aile Veri Kalitesi & Çift Kayıt Birleştirme</h1>
-        <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.92rem' }}>
-          Yapay zekâ algoritmaları tarafından taranan ve aynı kişi olma olasılığı yüksek (%96) tespit edilen çift kayıtlar
+        <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.4rem', fontWeight: 600, margin: '0 0 4px 0', color: 'var(--text-primary)' }}>Çift Kayıt ve Benzerlik Birleştirme</h2>
+        <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.84rem' }}>
+          Yapay zekâ algoritmaları tarafından tespit edilen ve aynı kişi olma olasılığı yüksek (%96.4) kayıtlar
         </p>
       </div>
 
       {merged ? (
-        <Card style={{ padding: '48px', textAlign: 'center', background: 'rgba(16, 185, 129, 0.1)', border: '1px solid #10b981' }}>
-          <span style={{ fontSize: '3rem', display: 'block', marginBottom: '12px' }}>✨</span>
-          <h3 style={{ color: '#34d399', margin: '0 0 8px 0' }}>Kayıtlar Başarıyla Tek Bir Düğümde Birleştirildi!</h3>
-          <p style={{ color: 'var(--text-secondary)', margin: '0 0 20px 0' }}>Mustafa Yılmaz profili tüm fotoğraflar ve akrabalık bağlarıyla tek çatı altında toplandı.</p>
-          <Button variant="outline" onClick={() => setMerged(false)}>Geri Al veya Başka Kayıt İncele</Button>
+        <Card style={{ padding: '48px', textAlign: 'center', background: 'var(--bg-surface)', border: '1px solid var(--accent-emerald)', borderRadius: 'var(--radius-lg)' }}>
+          <Check size={36} style={{ color: 'var(--accent-emerald)', margin: '0 auto 12px auto' }} />
+          <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.2rem', color: 'var(--text-primary)', margin: '0 0 6px 0' }}>Kayıtlar Başarıyla Birleştirildi</h3>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.86rem', margin: '0 0 20px 0' }}>Mustafa Yılmaz şahıs dosyası tüm fotoğraflar ve akrabalık bağlarıyla tek çatı altında toplandı.</p>
+          <button 
+            onClick={() => setMerged(false)}
+            style={{ padding: '8px 16px', background: 'var(--bg-surface-raised)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-sm)', color: 'var(--text-primary)', fontSize: '0.82rem', cursor: 'pointer' }}
+          >
+            Başka Kayıt İncele
+          </button>
         </Card>
       ) : (
-        <Card style={{ padding: '32px', border: '1px solid rgba(99, 102, 241, 0.4)', background: 'rgba(15, 23, 42, 0.85)' }}>
+        <Card style={{ padding: '28px', border: '1px solid var(--border-subtle)', background: 'var(--bg-surface)', borderRadius: 'var(--radius-xl)' }}>
           
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <span style={{ fontSize: '1.5rem' }}>⚠️</span>
+              <AlertTriangle size={20} style={{ color: 'var(--brand-primary)' }} />
               <div>
-                <strong style={{ fontSize: '1.1rem', color: '#ffffff' }}>Olası Çift Kayıt Şüphesi (Benzerlik Oranı: %96.4)</strong>
-                <span style={{ display: 'block', fontSize: '0.78rem', color: 'var(--text-muted)' }}>İki farklı aile üyesi tarafından eklenmiş benzer biyografi ve doğum tarihleri</span>
+                <strong style={{ fontSize: '0.96rem', color: 'var(--text-primary)' }}>Olası Çift Kayıt (Benzerlik: %96.4)</strong>
+                <span style={{ display: 'block', fontSize: '0.76rem', color: 'var(--text-muted)' }}>İki farklı aile üyesi tarafından açılmış benzer doğum ve biyografi verileri</span>
               </div>
             </div>
-            <span style={{ fontSize: '0.78rem', color: 'var(--accent-gold)', background: 'rgba(245, 158, 11, 0.15)', padding: '4px 12px', borderRadius: '9999px', fontWeight: 700 }}>
+            
+            <span style={{ fontSize: '0.74rem', color: 'var(--brand-primary)', background: 'var(--brand-surface)', padding: '3px 10px', borderRadius: 'var(--radius-full)', fontWeight: 600 }}>
               AI Önerisi: Birleştir
             </span>
           </div>
 
-          {/* Side by Side Diff Comparison */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 40px 1fr', gap: '20px', alignItems: 'center', marginBottom: '28px' }}>
+          {/* Side by Side Diff */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 40px 1fr', gap: '16px', alignItems: 'center', marginBottom: '24px' }}>
             
-            {/* Kayıt 1 */}
-            <div style={{ padding: '20px', background: 'rgba(255, 255, 255, 0.04)', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
-              <div style={{ fontSize: '0.75rem', color: 'var(--brand-text)', fontWeight: 700, marginBottom: '8px' }}>DÜĞÜM A (Ana Kayıt #1)</div>
-              <h3 style={{ margin: '0 0 10px 0', color: '#ffffff' }}>Mustafa Yılmaz</h3>
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.86rem', color: 'var(--text-secondary)' }}>
+            {/* Kayıt A */}
+            <div style={{ padding: '18px', background: 'var(--bg-main)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
+              <div style={{ fontSize: '0.72rem', color: 'var(--brand-primary)', fontWeight: 600, marginBottom: '6px' }}>KAYIT A (Ana Düğüm #1)</div>
+              <h3 style={{ fontFamily: 'var(--font-serif)', margin: '0 0 8px 0', color: 'var(--text-primary)' }}>Mustafa Yılmaz</h3>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
                 <li><strong>Doğum:</strong> 15.04.1940 • Bursa</li>
                 <li><strong>Ölüm:</strong> 22.08.2012 • İstanbul</li>
                 <li><strong>Meslek:</strong> Başöğretmen</li>
-                <li><strong>Ekleyen Üye:</strong> Ahmet Yılmaz</li>
-                <li><strong>Medya:</strong> 34 Fotoğraf</li>
+                <li><strong>Ekleyen:</strong> Ahmet Yılmaz</li>
+                <li><strong>Medya:</strong> 34 Fotoğraf & Belge</li>
               </ul>
             </div>
 
-            <div style={{ textAlign: 'center', color: 'var(--brand-primary)', fontSize: '1.5rem', fontWeight: 800 }}>
-              ⇄
+            <div style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
+              <ArrowRightLeft size={18} />
             </div>
 
-            {/* Kayıt 2 */}
-            <div style={{ padding: '20px', background: 'rgba(255, 255, 255, 0.04)', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
-              <div style={{ fontSize: '0.75rem', color: 'var(--accent-gold)', fontWeight: 700, marginBottom: '8px' }}>DÜĞÜM B (Aday Kayıt #14)</div>
-              <h3 style={{ margin: '0 0 10px 0', color: '#ffffff' }}>M. Yılmaz (Öğretmen)</h3>
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.86rem', color: 'var(--text-secondary)' }}>
+            {/* Kayıt B */}
+            <div style={{ padding: '18px', background: 'var(--bg-main)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 600, marginBottom: '6px' }}>KAYIT B (Aday Düğüm #14)</div>
+              <h3 style={{ fontFamily: 'var(--font-serif)', margin: '0 0 8px 0', color: 'var(--text-primary)' }}>M. Yılmaz (Öğretmen)</h3>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
                 <li><strong>Doğum:</strong> 1940 (Tahmini) • Bursa</li>
                 <li><strong>Ölüm:</strong> 2012 • Kadıköy</li>
                 <li><strong>Meslek:</strong> Öğretmen</li>
-                <li><strong>Ekleyen Üye:</strong> Ayşe Yılmaz</li>
+                <li><strong>Ekleyen:</strong> Ayşe Yılmaz</li>
                 <li><strong>Medya:</strong> 6 Belge</li>
               </ul>
             </div>
 
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '14px', borderTop: '1px solid var(--border-color)', paddingTop: '20px' }}>
-            <Button variant="outline" onClick={() => alert('Kayıtlar ayrı kişiler olarak işaretlendi ve yok sayıldı.')}>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', borderTop: '1px solid var(--border-subtle)', paddingTop: '16px' }}>
+            <button 
+              onClick={() => alert('Kayıtlar ayrı şahıslar olarak işaretlendi.')}
+              style={{ padding: '8px 14px', background: 'transparent', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-sm)', color: 'var(--text-secondary)', fontSize: '0.82rem', cursor: 'pointer' }}
+            >
               Farklı Kişiler (Yoksay)
-            </Button>
-            <Button variant="gold" onClick={() => setMerged(true)}>
-              ✨ Kayıtları Akıllı Birleştir (Merge)
-            </Button>
+            </button>
+            <button 
+              onClick={() => setMerged(true)}
+              style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 16px', background: 'var(--brand-primary)', border: 'none', borderRadius: 'var(--radius-sm)', color: '#FFFFFF', fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer' }}
+            >
+              <GitMerge size={14} />
+              <span>Kayıtları Birleştir</span>
+            </button>
           </div>
 
         </Card>

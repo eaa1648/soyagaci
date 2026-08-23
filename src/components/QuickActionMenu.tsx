@@ -4,24 +4,34 @@ import React, { useState } from 'react';
 import styles from './QuickActionMenu.module.css';
 import { Card } from '@/components/ui/card';
 import Link from 'next/link';
+import { 
+  UserPlus, 
+  Image as ImageIcon, 
+  FileText, 
+  Mic, 
+  Video, 
+  BookOpen, 
+  X,
+  Plus
+} from 'lucide-react';
 
 export function QuickActionMenu() {
   const [modalType, setModalType] = useState<string | null>(null);
 
   const relativeTypes = [
-    { label: 'Anne Ekle', icon: '👩', key: 'mother' },
-    { label: 'Baba Ekle', icon: '👨', key: 'father' },
-    { label: 'Eş Ekle', icon: '💍', key: 'spouse' },
-    { label: 'Çocuk Ekle', icon: '👶', key: 'child' },
-    { label: 'Kardeş Ekle', icon: '🧑‍🤝‍🧑', key: 'sibling' },
+    { label: 'Anne Ekle', key: 'mother' },
+    { label: 'Baba Ekle', key: 'father' },
+    { label: 'Eş Ekle', key: 'spouse' },
+    { label: 'Çocuk Ekle', key: 'child' },
+    { label: 'Kardeş Ekle', key: 'sibling' },
   ];
 
   const mediaTypes = [
-    { label: 'Fotoğraf', icon: '📸', href: '/media/upload?type=photo' },
-    { label: 'Eski Belge / Tapu', icon: '📜', href: '/media/upload?type=doc' },
-    { label: 'Ses Kaydı', icon: '🎙️', href: '/media/upload?type=audio' },
-    { label: 'Video / Film', icon: '🎥', href: '/media/upload?type=video' },
-    { label: 'Hatıra & Anı', icon: '📖', href: '/media/upload?type=story' },
+    { label: 'Fotoğraf', icon: ImageIcon, href: '/media/upload?type=photo' },
+    { label: 'Tapu / Belge', icon: FileText, href: '/media/upload?type=doc' },
+    { label: 'Ses Kaydı', icon: Mic, href: '/media/upload?type=audio' },
+    { label: 'Video Film', icon: Video, href: '/media/upload?type=video' },
+    { label: 'Hatıra Yaz', icon: BookOpen, href: '/media/upload?type=story' },
   ];
 
   return (
@@ -30,7 +40,7 @@ export function QuickActionMenu() {
         
         {/* Relative Quick Actions */}
         <div className={styles.sectionHeader}>
-          <span className={styles.titleIcon}>🌳</span>
+          <UserPlus size={16} className={styles.titleIcon} />
           <h4 className={styles.title}>Soy Ağacına Hızlı Ekle</h4>
         </div>
         
@@ -41,7 +51,7 @@ export function QuickActionMenu() {
               className={styles.relativeBtn}
               onClick={() => setModalType(item.label)}
             >
-              <span className={styles.btnIcon}>{item.icon}</span>
+              <Plus size={13} />
               <span className={styles.btnLabel}>{item.label}</span>
             </button>
           ))}
@@ -51,32 +61,37 @@ export function QuickActionMenu() {
 
         {/* Media Quick Actions */}
         <div className={styles.sectionHeader}>
-          <span className={styles.titleIcon}>✨</span>
-          <h4 className={styles.title}>Miras & Medya Yükle</h4>
+          <ImageIcon size={16} className={styles.titleIcon} />
+          <h4 className={styles.title}>Arşive Medya Yükle</h4>
         </div>
 
         <div className={styles.mediaGrid}>
-          {mediaTypes.map((item, idx) => (
-            <Link key={idx} href={item.href} className={styles.mediaBtn}>
-              <span className={styles.btnIcon}>{item.icon}</span>
-              <span className={styles.btnLabel}>{item.label}</span>
-            </Link>
-          ))}
+          {mediaTypes.map((item, idx) => {
+            const Icon = item.icon;
+            return (
+              <Link key={idx} href={item.href} className={styles.mediaBtn}>
+                <Icon size={14} />
+                <span className={styles.btnLabel}>{item.label}</span>
+              </Link>
+            );
+          })}
         </div>
 
       </Card>
 
-      {/* Interactive Quick Add Modal */}
+      {/* Quick Add Modal */}
       {modalType && (
         <div className={styles.modalBackdrop} onClick={() => setModalType(null)}>
           <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
             <div className={styles.modalHeader}>
-              <h3>➕ {modalType}</h3>
-              <button className={styles.modalClose} onClick={() => setModalType(null)}>✕</button>
+              <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.2rem', color: 'var(--text-primary)', margin: 0 }}>{modalType}</h3>
+              <button className={styles.modalClose} onClick={() => setModalType(null)}>
+                <X size={16} />
+              </button>
             </div>
             
             <p className={styles.modalDesc}>
-              Ağaçtaki seçili kişi veya profil sahibine doğrudan bağlı yeni bir birey oluşturun.
+              Ağaçtaki seçili kişiye doğrudan bağlı yeni bir aile bireyi oluşturun.
             </p>
 
             <form onSubmit={(e) => { e.preventDefault(); alert(`${modalType} başarıyla ağaca eklendi!`); setModalType(null); }} className={styles.modalForm}>

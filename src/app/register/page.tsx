@@ -3,13 +3,13 @@
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import styles from './page.module.css';
 import Link from 'next/link';
 import { auth, db } from '@/lib/firebase/config';
 import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
+import { ArrowRight, Check } from 'lucide-react';
 
 export default function RegisterPage() {
   const [name, setName] = useState('');
@@ -40,10 +40,9 @@ export default function RegisterPage() {
         });
         router.push('/verify-email');
       } else {
-        // Safe Demo mode
         setTimeout(() => {
           router.push('/verify-email');
-        }, 1000);
+        }, 800);
       }
     } catch (err: unknown) {
       console.error(err);
@@ -60,26 +59,27 @@ export default function RegisterPage() {
         
         {/* Visual Side */}
         <div className={styles.visualSide}>
-          <div className={styles.giftBadge}>🎁 100 HOŞ GELDİN KREDİSİ HEDİYE</div>
+          <div className={styles.crestBox}>Y</div>
+          
           <h2 className={styles.quoteTitle}>
-            Ailenizin Dijital Hafızasını Bugün Başlatın.
+            Aile Hafızasına Katılın
           </h2>
           <p className={styles.quoteSub}>
-            Kayıt olun, e-posta adresinizi doğrulayın ve ilk soy ağacınızı oluştururken 100 Hoş Geldin Kredisi ile yapay zekâ asistanından faydalanın.
+            Kaydolun, soy ağacınızı inceleyin ve ailenizin tarihi belgelerini keşfetmeye başlayın.
           </p>
 
-          <div className={styles.featurePills}>
-            <div>✓ Sınırsız Kuşak & Düğüm</div>
-            <div>✓ Yüksek Çözünürlüklü Arşiv</div>
-            <div>✓ Uçtan Uca Şifreli Gizlilik</div>
+          <div className={styles.featureList}>
+            <div className={styles.featureItem}><Check size={14} /> Sınırsız soy kütüğü ve fert kaydı</div>
+            <div className={styles.featureItem}><Check size={14} /> Yüksek çözünürlüklü belge arşivi</div>
+            <div className={styles.featureItem}><Check size={14} /> Yapay zekâ hafıza asistanı</div>
           </div>
         </div>
 
         {/* Form Side */}
         <Card className={styles.loginCard}>
           <div className={styles.header}>
-            <h1 className={styles.title}>Yeni Aile Hesabı</h1>
-            <p className={styles.subtitle}>Birkaç adımda ailenizin dijital arşivine katılın</p>
+            <h1 className={styles.title}>Yeni Hesap Aç</h1>
+            <p className={styles.subtitle}>Aile arşivine katılmak için bilgilerinizi girin</p>
           </div>
 
           <form className={styles.form} onSubmit={handleRegister}>
@@ -102,7 +102,7 @@ export default function RegisterPage() {
               onChange={(e) => setEmail(e.target.value)}
             />
             <Input 
-              label="Güçlü Bir Şifre Belirleyin" 
+              label="Şifre" 
               type="password" 
               placeholder="En az 6 karakter" 
               required 
@@ -110,9 +110,10 @@ export default function RegisterPage() {
               onChange={(e) => setPassword(e.target.value)}
             />
             
-            <Button fullWidth type="submit" variant="primary" disabled={loading}>
-              {loading ? 'Hesap Açılıyor...' : '✨ Kayıt Ol ve 100 Kredi Kazan'}
-            </Button>
+            <button type="submit" className={styles.primaryBtn} disabled={loading}>
+              <span>{loading ? 'Hesap Açılıyor...' : 'Kayıt Ol'}</span>
+              <ArrowRight size={15} />
+            </button>
           </form>
 
           <div className={styles.footer}>

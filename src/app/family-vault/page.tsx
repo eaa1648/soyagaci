@@ -2,8 +2,16 @@
 
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { 
+  Landmark, 
+  Coins, 
+  ArrowUpRight, 
+  ArrowDownLeft, 
+  Check, 
+  ArrowLeft,
+  ShieldCheck
+} from 'lucide-react';
 
 export default function FamilyVaultPage() {
   const [vaultBalance, setVaultBalance] = useState(2550);
@@ -13,10 +21,10 @@ export default function FamilyVaultPage() {
 
   const TRANSACTIONS = [
     { id: 1, title: 'Ahmet Yılmaz Bireysel Katkı', type: 'IN', amount: 500, date: '23 Ağustos 2026', user: 'Ahmet Yılmaz', category: 'Katkı' },
-    { id: 2, title: 'AI Toplu Fotoğraf Restorasyonu & Renklendirme', type: 'OUT', amount: 150, date: '22 Ağustos 2026', user: 'Zeynep Yılmaz', category: 'Yapay Zekâ' },
-    { id: 3, title: 'Davet Bonusu (Elif Yılmaz Kaydoldu)', type: 'IN', amount: 200, date: '20 Ağustos 2026', user: 'Sistem', category: 'Bonus' },
-    { id: 4, title: 'Osmanlıca Tapu Transkripsiyonu', type: 'OUT', amount: 50, date: '18 Ağustos 2026', user: 'Ali Yılmaz', category: 'Arşiv Çeviri' },
-    { id: 5, title: 'Aile Kasası Hoş Geldin Kurulum Hibesi', type: 'IN', amount: 2000, date: '15 Ağustos 2026', user: 'Platform', category: 'Kurulum' },
+    { id: 2, title: 'AI Fotoğraf Restorasyonu & İyileştirme', type: 'OUT', amount: 150, date: '22 Ağustos 2026', user: 'Zeynep Yılmaz', category: 'Yapay Zekâ' },
+    { id: 3, title: 'Davet Katılım Bonusu (Elif Yılmaz)', type: 'IN', amount: 200, date: '20 Ağustos 2026', user: 'Sistem', category: 'Bonus' },
+    { id: 4, title: 'Osmanlıca Tapu Metin Çevirisi', type: 'OUT', amount: 50, date: '18 Ağustos 2026', user: 'Ali Yılmaz', category: 'Arşiv Çeviri' },
+    { id: 5, title: 'Aile Kasası Açılış Tahsisi', type: 'IN', amount: 2000, date: '15 Ağustos 2026', user: 'Platform', category: 'Kurulum' },
   ];
 
   const handleTransfer = () => {
@@ -31,173 +39,163 @@ export default function FamilyVaultPage() {
   };
 
   return (
-    <div style={{ maxWidth: '1080px', margin: '0 auto', padding: '32px 24px 80px 24px' }}>
+    <div style={{ maxWidth: '1040px', margin: '0 auto', padding: '32px 24px 80px 24px' }}>
       
-      {/* Page Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '32px', flexWrap: 'wrap', gap: '16px' }}>
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-            <Link href="/" style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontSize: '0.88rem' }}>← Ana Sayfa</Link>
-            <span style={{ color: 'var(--border-color)' }}>/</span>
-            <span style={{ fontSize: '0.88rem', color: 'var(--accent-gold)', fontWeight: 600 }}>Kasa & Finans</span>
-          </div>
-          <h1 style={{ fontSize: '2rem', fontWeight: 800, margin: 0, color: '#ffffff' }}>🏛️ Yılmaz Ailesi Ortak Kasası</h1>
+      {/* Top Breadcrumb */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Link href="/" style={{ textDecoration: 'none', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.82rem' }}>
+            <ArrowLeft size={14} />
+            <span>Arşiv</span>
+          </Link>
+          <span style={{ color: 'var(--border-subtle)' }}>/</span>
+          <span style={{ fontSize: '0.82rem', color: 'var(--text-primary)', fontWeight: 500 }}>Ortak Aile Kasası</span>
         </div>
 
-        {/* User personal credit pill */}
-        <div style={{ background: 'rgba(15, 23, 42, 0.8)', border: '1px solid rgba(245, 158, 11, 0.3)', padding: '10px 20px', borderRadius: '9999px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Bireysel Bakiyeniz:</span>
-          <strong style={{ color: 'var(--accent-gold)', fontSize: '1.1rem' }}>✨ {userBalance} Kredi</strong>
+        {/* User Balance Pill */}
+        <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', padding: '6px 14px', borderRadius: 'var(--radius-full)', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem' }}>
+          <span style={{ color: 'var(--text-muted)' }}>Bireysel Bakiye:</span>
+          <strong style={{ color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums' }}>{userBalance} Kredi</strong>
         </div>
       </div>
 
       {showSuccessToast && (
-        <div style={{ padding: '14px 20px', background: 'rgba(16, 185, 129, 0.2)', border: '1px solid #10b981', borderRadius: '12px', color: '#34d399', marginBottom: '24px', fontWeight: 600, animation: 'fadeIn 0.2s' }}>
-          ✅ {transferAmount} kredi başarıyla Aile Kasasına aktarıldı!
+        <div style={{ padding: '12px 18px', background: 'var(--accent-emerald-bg)', border: '1px solid var(--accent-emerald)', borderRadius: 'var(--radius-md)', color: 'var(--accent-emerald)', marginBottom: '24px', fontSize: '0.86rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Check size={16} />
+          <span>{transferAmount} kredi başarıyla Aile Ortak Kasasına aktarıldı.</span>
         </div>
       )}
 
-      {/* Top Cards: Metallic Smart Card & Contribution Panel */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: '28px', marginBottom: '40px' }}>
+      {/* Top Cards Grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '20px', marginBottom: '32px' }}>
         
-        {/* Glowing Metallic Vault Card */}
-        <Card style={{ 
-          padding: '32px', 
-          background: 'linear-gradient(135deg, rgba(30, 27, 75, 0.95) 0%, rgba(15, 23, 42, 0.98) 50%, rgba(49, 46, 129, 0.9) 100%)',
-          border: '1px solid rgba(99, 102, 241, 0.4)',
-          boxShadow: '0 20px 40px -10px rgba(0, 0, 0, 0.7), 0 0 35px rgba(99, 102, 241, 0.25)',
-          position: 'relative',
-          overflow: 'hidden',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          minHeight: '260px'
-        }}>
-          {/* Card Hologram Chip */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <div style={{ width: '48px', height: '36px', borderRadius: '8px', background: 'linear-gradient(135deg, #fbbf24, #d97706)', border: '1px solid rgba(255, 255, 255, 0.4)', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)' }} />
-            <span style={{ fontSize: '0.78rem', color: '#c7d2fe', fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase' }}>YILMAZ HANEDANI KASASI</span>
-          </div>
-
+        {/* Vault Balance Card */}
+        <Card style={{ padding: '32px', background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-xl)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           <div>
-            <span style={{ fontSize: '0.85rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'block', marginBottom: '4px' }}>Toplam Ortak Kredi Havuzu</span>
-            <div style={{ fontSize: '3.4rem', fontWeight: 800, color: '#ffffff', fontFamily: 'var(--font-display)', letterSpacing: '-0.02em' }}>
-              {vaultBalance.toLocaleString('tr-TR')} <span style={{ fontSize: '1.4rem', color: 'var(--accent-gold)' }}>KREDİ</span>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+              <span style={{ fontSize: '0.74rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>TOPLAM FON</span>
+              <Landmark size={20} style={{ color: 'var(--brand-primary)' }} />
             </div>
+            
+            <div style={{ fontFamily: 'var(--font-serif)', fontSize: '3rem', fontWeight: 600, color: 'var(--text-primary)', lineHeight: 1, marginBottom: '8px', fontVariantNumeric: 'tabular-nums' }}>
+              {vaultBalance.toLocaleString('tr-TR')} <span style={{ fontSize: '1.4rem', fontFamily: 'var(--font-sans)', color: 'var(--text-muted)', fontWeight: 400 }}>Kredi</span>
+            </div>
+            <p style={{ margin: 0, fontSize: '0.84rem', color: 'var(--text-secondary)' }}>
+              Tüm aile bireylerinin ortak fotoğraf restorasyonu, belge çevirisi ve yapay zekâ işlemleri için kullanılır.
+            </p>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(255, 255, 255, 0.1)', paddingTop: '16px', fontSize: '0.82rem', color: '#94a3b8' }}>
-            <span>Yetkili Yöneticiler: <strong>Ahmet Y. & Ali Y.</strong></span>
-            <span>Durum: <strong style={{ color: '#34d399' }}>● Aktif & Güvenli</strong></span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingTop: '24px', borderTop: '1px solid var(--border-subtle)', marginTop: '24px', fontSize: '0.76rem', color: 'var(--text-muted)' }}>
+            <ShieldCheck size={14} style={{ color: 'var(--accent-emerald)' }} />
+            <span>Şifreli Fon • Yılmaz Ailesi İdare Heyeti Denetiminde</span>
           </div>
         </Card>
 
-        {/* Contribution Action Widget */}
-        <Card style={{ padding: '28px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+        {/* Transfer Action Card */}
+        <Card style={{ padding: '28px', background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-xl)', display: 'flex', flexDirection: 'column', gap: '18px' }}>
           <div>
-            <h3 style={{ margin: '0 0 8px 0', fontSize: '1.2rem', color: '#ffffff' }}>Kasaya Kredi Aktar</h3>
-            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: '0 0 20px 0', lineHeight: 1.5 }}>
-              Yapay zekâ ile eski fotoğrafların renklendirilmesi veya Osmanlıca belgelerin tercümesi için kasaya destek olun.
-            </p>
-
-            <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
-              {[25, 50, 100].map(val => (
-                <button
-                  key={val}
-                  onClick={() => setTransferAmount(val)}
-                  style={{
-                    flex: 1,
-                    padding: '10px 0',
-                    borderRadius: '10px',
-                    background: transferAmount === val ? 'var(--brand-primary)' : 'rgba(255, 255, 255, 0.05)',
-                    color: '#ffffff',
-                    border: '1px solid var(--border-color)',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease'
-                  }}
-                >
-                  +{val} Kredi
-                </button>
-              ))}
-            </div>
+            <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.2rem', fontWeight: 600, margin: '0 0 4px 0', color: 'var(--text-primary)' }}>Kasaya Katkıda Bulun</h3>
+            <p style={{ margin: 0, fontSize: '0.82rem', color: 'var(--text-secondary)' }}>Bireysel bakiyenizden ortak kasaya kredi aktarın</p>
           </div>
 
-          <Button variant="gold" fullWidth onClick={handleTransfer}>
-            Kasaya {transferAmount} Kredi Gönder ✨
-          </Button>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            {[25, 50, 100].map(amt => (
+              <button
+                key={amt}
+                onClick={() => setTransferAmount(amt)}
+                style={{
+                  flex: 1,
+                  padding: '8px 0',
+                  borderRadius: 'var(--radius-sm)',
+                  border: `1px solid ${transferAmount === amt ? 'var(--brand-primary)' : 'var(--border-subtle)'}`,
+                  background: transferAmount === amt ? 'var(--brand-surface)' : 'var(--bg-main)',
+                  color: transferAmount === amt ? 'var(--brand-primary)' : 'var(--text-secondary)',
+                  fontWeight: 600,
+                  fontSize: '0.82rem',
+                  cursor: 'pointer',
+                }}
+              >
+                +{amt}
+              </button>
+            ))}
+          </div>
+
+          <button
+            onClick={handleTransfer}
+            style={{
+              width: '100%',
+              padding: '10px',
+              borderRadius: 'var(--radius-sm)',
+              background: 'var(--brand-primary)',
+              color: '#FFFFFF',
+              border: 'none',
+              fontWeight: 600,
+              fontSize: '0.84rem',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px'
+            }}
+          >
+            <Coins size={15} />
+            <span>{transferAmount} Kredi Aktar</span>
+          </button>
         </Card>
 
       </div>
 
-      {/* Progress towards AI Family Goal */}
-      <Card style={{ padding: '24px', marginBottom: '40px', background: 'rgba(15, 23, 42, 0.7)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-          <div>
-            <strong style={{ fontSize: '1rem', color: '#ffffff' }}>🎯 Aile Hedefi: 342 Eski Fotoğrafın Yapay Zekâ ile Renklendirilmesi</strong>
-            <span style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-muted)' }}>Toplanan kredilerle tüm siyah-beyaz aile albümü 4K çözünürlükte restore edilecek.</span>
-          </div>
-          <strong style={{ color: 'var(--accent-gold)', fontSize: '1.1rem' }}>%74 Tamamlandı</strong>
-        </div>
-        
-        {/* Progress bar */}
-        <div style={{ width: '100%', height: '10px', background: 'rgba(255, 255, 255, 0.1)', borderRadius: '9999px', overflow: 'hidden' }}>
-          <div style={{ width: '74%', height: '100%', background: 'linear-gradient(90deg, #6366f1, #f59e0b)', borderRadius: '9999px' }} />
-        </div>
-      </Card>
-
-      {/* Transactions History Table */}
-      <Card style={{ padding: '28px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-          <h3 style={{ margin: 0, fontSize: '1.25rem', color: '#ffffff' }}>📋 Kasa Hesap Defteri ve Harcama Hareketleri</h3>
-          <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Son 30 Günlük Kayıtlar</span>
+      {/* Transactions Ledger */}
+      <Card style={{ padding: '24px', background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-lg)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+          <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.2rem', fontWeight: 600, color: 'var(--text-primary)', margin: 0 }}>Hesap Hareketleri</h3>
+          <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Son 5 İşlem</span>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          {TRANSACTIONS.map((tx) => (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          {TRANSACTIONS.map(tx => (
             <div 
-              key={tx.id} 
-              style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
+              key={tx.id}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
                 justifyContent: 'space-between',
-                padding: '14px 18px',
-                background: 'rgba(255, 255, 255, 0.03)',
-                borderRadius: '12px',
-                border: '1px solid var(--border-color)'
+                padding: '12px 16px',
+                background: 'var(--bg-main)',
+                borderRadius: 'var(--radius-sm)',
+                border: '1px solid var(--border-subtle)',
+                fontSize: '0.84rem'
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <div style={{ 
-                  width: '40px', 
-                  height: '40px', 
-                  borderRadius: '50%', 
-                  background: tx.type === 'IN' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)',
-                  color: tx.type === 'IN' ? '#34d399' : '#f87171',
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center',
-                  fontWeight: 800,
-                  fontSize: '1.1rem'
+                  width: '32px', 
+                  height: '32px', 
+                  borderRadius: 'var(--radius-xs)', 
+                  background: tx.type === 'IN' ? 'var(--accent-emerald-bg)' : 'var(--bg-surface-raised)',
+                  color: tx.type === 'IN' ? 'var(--accent-emerald)' : 'var(--text-muted)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
                 }}>
-                  {tx.type === 'IN' ? '↓' : '↑'}
+                  {tx.type === 'IN' ? <ArrowDownLeft size={16} /> : <ArrowUpRight size={16} />}
                 </div>
-                
+
                 <div>
-                  <strong style={{ fontSize: '0.94rem', color: '#ffffff', display: 'block' }}>{tx.title}</strong>
-                  <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>{tx.date} • {tx.user}</span>
+                  <strong style={{ display: 'block', color: 'var(--text-primary)', fontSize: '0.86rem' }}>{tx.title}</strong>
+                  <span style={{ color: 'var(--text-muted)', fontSize: '0.74rem' }}>{tx.user} • {tx.date}</span>
                 </div>
               </div>
 
               <div style={{ textAlign: 'right' }}>
-                <span style={{ 
-                  fontSize: '1.1rem', 
-                  fontWeight: 800,
-                  color: tx.type === 'IN' ? '#34d399' : '#f87171' 
+                <strong style={{ 
+                  color: tx.type === 'IN' ? 'var(--accent-emerald)' : 'var(--text-primary)',
+                  fontSize: '0.95rem',
+                  fontVariantNumeric: 'tabular-nums'
                 }}>
                   {tx.type === 'IN' ? `+${tx.amount}` : `-${tx.amount}`} Kredi
-                </span>
-                <span style={{ display: 'block', fontSize: '0.72rem', color: 'var(--text-muted)' }}>{tx.category}</span>
+                </strong>
+                <span style={{ display: 'block', fontSize: '0.7rem', color: 'var(--text-muted)' }}>{tx.category}</span>
               </div>
             </div>
           ))}

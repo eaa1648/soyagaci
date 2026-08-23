@@ -3,10 +3,10 @@
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import styles from './page.module.css';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { ArrowRight } from 'lucide-react';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -19,33 +19,30 @@ export default function LoginPage() {
 
   return (
     <div className={styles.container}>
-      
-      {/* Split Hero Card */}
       <div className={styles.authWrapper}>
         
-        {/* Left Side: Nostalgic Family Visual */}
+        {/* Left Side: Heritage Visual */}
         <div className={styles.visualSide}>
-          <div className={styles.quoteBadge}>📜 NESİLDEN NESİLE MİRAS</div>
+          <div className={styles.crestBox}>Y</div>
+          
           <h2 className={styles.quoteTitle}>
-            &ldquo;Kökleri derinde olan bir ailenin dalları geleceğe uzanır.&rdquo;
+            &ldquo;Kökünü bilmeyen ağacın meyvesi tatlı olmaz.&rdquo;
           </h2>
           <p className={styles.quoteSub}>
-            Yılmaz Hanedanı Dijital Arşivi • 1880&apos;den günümüze taşınan 342 fotoğraf ve ses kaydı
+            Yılmaz Ailesi Dijital Arşivi • 1880&apos;den günümüze uzanan aile hafızası
           </p>
 
-          <div className={styles.vintageStamps}>
-            <span>📍 Bursa Kütüğü</span>
-            <span>🕊️ 5 Kuşak Hafıza</span>
-            <span>✨ Gemini AI Destekli</span>
+          <div className={styles.vintageTags}>
+            <span>Bursa & İstanbul Kütükleri</span>
+            <span>5 Kuşak Şecere</span>
           </div>
         </div>
 
         {/* Right Side: Login Form */}
         <Card className={styles.loginCard}>
           <div className={styles.header}>
-            <div className={styles.logoBadge}>🌳</div>
-            <h1 className={styles.title}>Aile Hafızası Girişi</h1>
-            <p className={styles.subtitle}>Ailenizin ortak arşivine ve soy ağacına bağlanın</p>
+            <h1 className={styles.title}>Aile Arşivi Girişi</h1>
+            <p className={styles.subtitle}>Ailenizin ortak şeceresine ve belgelerine erişin</p>
           </div>
 
           <form className={styles.form} onSubmit={(e) => { e.preventDefault(); handleDemoLogin(); }}>
@@ -66,21 +63,22 @@ export default function LoginPage() {
               required 
             />
             
-            <Button fullWidth type="submit" variant="primary">
-              Giriş Yap →
-            </Button>
+            <button type="submit" className={styles.primaryBtn}>
+              <span>Giriş Yap</span>
+              <ArrowRight size={15} />
+            </button>
 
             <button 
               type="button" 
               onClick={handleDemoLogin}
               className={styles.demoLoginBtn}
             >
-              🚀 Misafir / Demo Girişi ile Keşfet
+              Misafir / Önizleme Girişi
             </button>
           </form>
 
           <div className={styles.footer}>
-            <p>Aileye yeni misiniz? <Link href="/register" className={styles.link}>Kayıt Ol & +100 Kredi Kazan</Link></p>
+            <p>Hesabınız yok mu? <Link href="/register" className={styles.link}>Kayıt Ol</Link></p>
           </div>
         </Card>
 

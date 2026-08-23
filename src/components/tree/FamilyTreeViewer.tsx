@@ -3,451 +3,505 @@
 import React, { useState, useRef, useCallback } from 'react';
 import styles from './FamilyTreeViewer.module.css';
 import Link from 'next/link';
+import { 
+  ZoomIn, 
+  ZoomOut, 
+  RotateCcw, 
+  Search, 
+  Download, 
+  Plus, 
+  X, 
+  ArrowUpRight,
+  Sparkles,
+  Volume2
+} from 'lucide-react';
 
 interface TreeNodeData {
   id: string;
   name: string;
   years: string;
   job: string;
-  relation: string;
-  generation: string;
-  x: number;
-  y: number;
+  generation: number;
   gender: 'male' | 'female';
   isLiving: boolean;
-  avatarColor: string;
-  photoCount: number;
+  hasAudio?: boolean;
+  x: number;
+  y: number;
+  parents?: string[];
   spouseId?: string;
-  childrenIds?: string[];
+  children?: string[];
 }
 
-const TREE_DATA: TreeNodeData[] = [
-  // 1. Kuşak (Kökler)
+const INITIAL_TREE_DATA: TreeNodeData[] = [
+  // 1. Kuşak (Kök)
   {
     id: '1',
     name: 'Mustafa Yılmaz',
-    years: '1940 - 2012',
+    years: '1940 — 2012',
     job: 'Başöğretmen',
-    relation: 'Büyük Dede (Kök)',
-    generation: '1. Kuşak',
-    x: 350,
-    y: 120,
+    generation: 1,
     gender: 'male',
     isLiving: false,
-    avatarColor: '#f59e0b',
-    photoCount: 34,
+    hasAudio: true,
     spouseId: '2',
-    childrenIds: ['3', '4']
+    children: ['3', '4'],
+    x: 400,
+    y: 100,
   },
   {
     id: '2',
     name: 'Ayşe Yılmaz (Demir)',
-    years: '1945 - Günümüz',
+    years: '1945 — Günümüz',
     job: 'Emekli Terzi',
-    relation: 'Büyük Anne',
-    generation: '1. Kuşak',
-    x: 650,
-    y: 120,
+    generation: 1,
     gender: 'female',
     isLiving: true,
-    avatarColor: '#10b981',
-    photoCount: 48,
+    hasAudio: true,
     spouseId: '1',
-    childrenIds: ['3', '4']
+    children: ['3', '4'],
+    x: 660,
+    y: 100,
   },
-
-  // 2. Kuşak
+  // 2. Kuşak (Çocuklar)
   {
     id: '3',
     name: 'Ali Yılmaz',
-    years: '1970 - Günümüz',
-    job: 'Yüksek Mühendis',
-    relation: 'Baba',
-    generation: '2. Kuşak',
-    x: 250,
-    y: 380,
+    years: '1970 — Günümüz',
+    job: 'İnşaat Mühendisi',
+    generation: 2,
     gender: 'male',
     isLiving: true,
-    avatarColor: '#6366f1',
-    photoCount: 82,
-    childrenIds: ['5', '6']
+    hasAudio: true,
+    parents: ['1', '2'],
+    children: ['5', '6'],
+    x: 320,
+    y: 340,
   },
   {
     id: '4',
     name: 'Zeynep Yılmaz (Kaya)',
-    years: '1975 - Günümüz',
-    job: 'Mimar & Araştırmacı',
-    relation: 'Hala',
-    generation: '2. Kuşak',
-    x: 750,
-    y: 380,
+    years: '1975 — Günümüz',
+    job: 'Mimar & Öğretim Görevlisi',
+    generation: 2,
     gender: 'female',
     isLiving: true,
-    avatarColor: '#ec4899',
-    photoCount: 29,
-    childrenIds: ['7']
+    parents: ['1', '2'],
+    children: ['7'],
+    x: 740,
+    y: 340,
   },
-
   // 3. Kuşak (Torunlar)
   {
     id: '5',
     name: 'Ahmet Yılmaz',
-    years: '1998 - Günümüz',
+    years: '1998 — Günümüz',
     job: 'Yazılım Mühendisi',
-    relation: 'Siz (Profil Sahibi)',
-    generation: '3. Kuşak',
-    x: 120,
-    y: 640,
+    generation: 3,
     gender: 'male',
     isLiving: true,
-    avatarColor: '#06b6d4',
-    photoCount: 115,
+    parents: ['3'],
+    x: 200,
+    y: 580,
   },
   {
     id: '6',
     name: 'Elif Yılmaz',
-    years: '2004 - Günümüz',
-    job: 'Tıp Öğrencisi',
-    relation: 'Kız Kardeş',
-    generation: '3. Kuşak',
-    x: 380,
-    y: 640,
+    years: '2004 — Günümüz',
+    job: 'Grafik Tasarım',
+    generation: 3,
     gender: 'female',
     isLiving: true,
-    avatarColor: '#a855f7',
-    photoCount: 42,
+    parents: ['3'],
+    x: 440,
+    y: 580,
   },
   {
     id: '7',
     name: 'Can Kaya',
-    years: '2008 - Günümüz',
+    years: '2008 — Günümüz',
     job: 'Lise Öğrencisi',
-    relation: 'Kuzen',
-    generation: '3. Kuşak',
-    x: 750,
-    y: 640,
+    generation: 3,
     gender: 'male',
     isLiving: true,
-    avatarColor: '#f97316',
-    photoCount: 19,
+    parents: ['4'],
+    x: 740,
+    y: 580,
   },
 ];
 
 export function FamilyTreeViewer() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  
-  // Canvas Viewport State
-  const [scale, setScale] = useState(0.95);
-  const [position, setPosition] = useState({ x: -100, y: -20 });
+  const [treeData, setTreeData] = useState<TreeNodeData[]>(INITIAL_TREE_DATA);
+  const [zoom, setZoom] = useState(1);
+  const [pan, setPan] = useState({ x: 50, y: 30 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [selectedNode, setSelectedNode] = useState<TreeNodeData | null>(INITIAL_TREE_DATA[0]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedNode, setSelectedNode] = useState<TreeNodeData | null>(null);
-  const [filterGen, setFilterGen] = useState<string>('all');
+  
+  // Add Relative Modal
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newPersonName, setNewPersonName] = useState('');
+  const [newPersonJob, setNewPersonJob] = useState('');
+  const [newPersonGender, setNewPersonGender] = useState<'male' | 'female'>('male');
+  const [newPersonRelation, setNewPersonRelation] = useState<'child' | 'spouse' | 'sibling'>('child');
 
-  // Center on specific node
-  const centerOnNode = useCallback((node: TreeNodeData) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Pan handlers
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if ((e.target as HTMLElement).closest(`.${styles.nodeCard}`) || 
+        (e.target as HTMLElement).closest(`.${styles.toolbar}`) ||
+        (e.target as HTMLElement).closest(`.${styles.drawer}`)) {
+      return;
+    }
+    setIsDragging(true);
+    setDragStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return;
+    setPan({ x: e.clientX - dragStart.x, y: e.clientY - dragStart.y });
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleWheel = useCallback((e: React.WheelEvent) => {
+    e.preventDefault();
+    const zoomFactor = e.deltaY < 0 ? 1.08 : 0.92;
+    setZoom(prev => Math.min(Math.max(prev * zoomFactor, 0.4), 2.2));
+  }, []);
+
+  const resetView = () => {
+    setZoom(1);
+    setPan({ x: 50, y: 30 });
+  };
+
+  // Add person logic
+  const handleAddPersonSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newPersonName.trim() || !selectedNode) return;
+
+    let targetX = selectedNode.x + 200;
+    let targetY = selectedNode.y;
+    let targetGen = selectedNode.generation;
+
+    if (newPersonRelation === 'child') {
+      targetGen = selectedNode.generation + 1;
+      targetY = selectedNode.y + 240;
+      targetX = selectedNode.x;
+    } else if (newPersonRelation === 'spouse') {
+      targetX = selectedNode.x + 260;
+    }
+
+    const newId = `p-${Date.now()}`;
+    const newPerson: TreeNodeData = {
+      id: newId,
+      name: newPersonName,
+      years: `${new Date().getFullYear()} — Günümüz`,
+      job: newPersonJob || 'Aile Üyesi',
+      generation: targetGen,
+      gender: newPersonGender,
+      isLiving: true,
+      x: targetX,
+      y: targetY,
+    };
+
+    setTreeData(prev => [...prev, newPerson]);
+    setSelectedNode(newPerson);
+    setShowAddModal(false);
+    setNewPersonName('');
+    setNewPersonJob('');
+  };
+
+  // Center node in view
+  const centerNode = (node: TreeNodeData) => {
     setSelectedNode(node);
     if (!containerRef.current) return;
-    const { clientWidth, clientHeight } = containerRef.current;
-    setPosition({
-      x: clientWidth / 2 - node.x * scale - 120,
-      y: clientHeight / 2 - node.y * scale - 60,
-    });
-  }, [scale]);
+    const rect = containerRef.current.getBoundingClientRect();
+    const targetPanX = (rect.width / 2) - (node.x * zoom) - (110 * zoom);
+    const targetPanY = (rect.height / 2) - (node.y * zoom) - (60 * zoom);
+    setPan({ x: targetPanX, y: targetPanY });
+  };
 
-  // Pan (Drag) Logic
-  const handlePointerDown = (e: React.PointerEvent) => {
-    if (e.button !== 0 && e.pointerType === 'mouse') return;
-    setIsDragging(true);
-    setDragStart({ x: e.clientX - position.x, y: e.clientY - position.y });
-    if (containerRef.current) {
-      containerRef.current.setPointerCapture(e.pointerId);
+  const handleSearchSelect = (name: string) => {
+    const found = treeData.find(n => n.name.toLowerCase().includes(name.toLowerCase()));
+    if (found) {
+      centerNode(found);
+      setSearchQuery('');
     }
   };
-
-  const handlePointerMove = (e: React.PointerEvent) => {
-    if (!isDragging) return;
-    setPosition({
-      x: e.clientX - dragStart.x,
-      y: e.clientY - dragStart.y,
-    });
-  };
-
-  const handlePointerUp = (e: React.PointerEvent) => {
-    setIsDragging(false);
-    if (containerRef.current) {
-      containerRef.current.releasePointerCapture(e.pointerId);
-    }
-  };
-
-  // Zoom (Wheel)
-  const handleWheel = (e: React.WheelEvent) => {
-    e.preventDefault();
-    const zoomSensitivity = 0.0012;
-    const delta = -e.deltaY * zoomSensitivity;
-    const newScale = Math.min(Math.max(0.3, scale * Math.exp(delta)), 2.8);
-    setScale(newScale);
-  };
-
-  // Search filter
-  const searchResults = searchQuery
-    ? TREE_DATA.filter(n => n.name.toLowerCase().includes(searchQuery.toLowerCase()) || n.job.toLowerCase().includes(searchQuery.toLowerCase()))
-    : [];
 
   return (
-    <div className={styles.viewerContainer}>
+    <div 
+      className={styles.canvasWrapper} 
+      ref={containerRef}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onWheel={handleWheel}
+      style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+    >
       
-      {/* Top Floating Command Bar */}
-      <div className={styles.topBar}>
+      {/* 1. TOP TOOLBAR */}
+      <div className={styles.toolbar}>
         
-        {/* Home & Breadcrumb */}
-        <div className={styles.breadcrumbGroup}>
-          <Link href="/" className={styles.homeBtn} title="Ana Sayfaya Dön">
-            ← Ana Sayfa
-          </Link>
-          <div className={styles.treeTitlePill}>
-            <span className={styles.pulseLive} />
-            <strong>Yılmaz Âilesi Şecere-i Âzâmı</strong>
-            <span className={styles.nodeCountBadge}>7 Kişi / 3 Kuşak</span>
-          </div>
-        </div>
-
-        {/* Tree Search Bar */}
-        <div className={styles.searchContainer}>
-          <span className={styles.searchIcon}>🔍</span>
-          <input
-            type="text"
-            placeholder="Ağaçta kişi bul (örn: 'Mustafa', 'Elif')..."
+        {/* Search in tree */}
+        <div className={styles.searchBox}>
+          <Search size={14} className={styles.searchIcon} />
+          <input 
+            type="text" 
+            placeholder="Ağaçta kişi ara..." 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleSearchSelect(searchQuery)}
             className={styles.searchInput}
           />
-          {searchResults.length > 0 && (
-            <div className={styles.searchResultsDropdown}>
-              {searchResults.map(result => (
-                <div 
-                  key={result.id} 
-                  className={styles.searchResultItem}
-                  onClick={() => { centerOnNode(result); setSearchQuery(''); }}
-                >
-                  <div className={styles.resultAvatar} style={{ background: result.avatarColor }}>
-                    {result.name.charAt(0)}
-                  </div>
-                  <div>
-                    <strong>{result.name}</strong>
-                    <span>{result.relation} • {result.years}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
         </div>
 
-        {/* Filter Controls */}
-        <div className={styles.filterGroup}>
-          <button 
-            className={`${styles.filterBtn} ${filterGen === 'all' ? styles.filterActive : ''}`}
-            onClick={() => setFilterGen('all')}
-          >
-            Tüm Ağaç
+        <div className={styles.toolbarDivider} />
+
+        {/* Zoom Controls */}
+        <div className={styles.btnGroup}>
+          <button className={styles.toolBtn} onClick={() => setZoom(z => Math.min(z + 0.15, 2.2))} title="Yakınlaştır">
+            <ZoomIn size={16} />
           </button>
-          <button 
-            className={`${styles.filterBtn} ${filterGen === '1. Kuşak' ? styles.filterActive : ''}`}
-            onClick={() => setFilterGen('1. Kuşak')}
-          >
-            1. Kuşak
+          <button className={styles.toolBtn} onClick={() => setZoom(z => Math.max(z - 0.15, 0.4))} title="Uzaklaştır">
+            <ZoomOut size={16} />
           </button>
-          <button 
-            className={`${styles.filterBtn} ${filterGen === 'living' ? styles.filterActive : ''}`}
-            onClick={() => setFilterGen('living')}
-          >
-            Yaşayanlar
+          <button className={styles.toolBtn} onClick={resetView} title="Merkeze Sıfırla">
+            <RotateCcw size={15} />
           </button>
         </div>
 
-      </div>
+        <div className={styles.toolbarDivider} />
 
-      {/* Floating Canvas Controls */}
-      <div className={styles.controlsDock}>
-        <div className={styles.zoomPill}>
-          <button onClick={() => setScale(s => Math.min(s * 1.25, 2.5))} title="Yakınlaştır">+</button>
-          <span>{Math.round(scale * 100)}%</span>
-          <button onClick={() => setScale(s => Math.max(s / 1.25, 0.3))} title="Uzaklaştır">-</button>
-        </div>
-        <button 
-          className={styles.controlActionBtn} 
-          onClick={() => { setScale(0.95); setPosition({ x: -100, y: -20 }); }}
-          title="Merkeze Al"
-        >
-          🎯 Merkeze Al
+        {/* Export and Add */}
+        <button className={styles.toolBtn} onClick={() => alert('Yüksek çözünürlüklü SVG soyağacı şeması dışa aktarıldı.')} title="Şemayı İndir">
+          <Download size={15} />
+          <span className={styles.btnText}>Dışa Aktar</span>
         </button>
-        <button 
-          className={styles.controlActionBtn}
-          onClick={() => alert('Soy ağacı yüksek çözünürlüklü PDF formatında indiriliyor...')}
-          title="PDF Olarak Dışa Aktar"
-        >
-          📄 PDF İndir
+
+        <button className={styles.primaryToolBtn} onClick={() => setShowAddModal(true)}>
+          <Plus size={15} strokeWidth={2.4} />
+          <span>Kişi Ekle</span>
         </button>
+
       </div>
 
-      {/* Generation Level Markers (Left Side) */}
-      <div className={styles.generationMarkers}>
-        <div className={styles.genMarker} style={{ top: '15%' }}>
-          <span className={styles.genBadge}>1. KUŞAK • KÖKLER</span>
-          <span className={styles.genSub}>1940 - 1969 Dönemi</span>
-        </div>
-        <div className={styles.genMarker} style={{ top: '45%' }}>
-          <span className={styles.genBadge}>2. KUŞAK • ÇOCUKLAR</span>
-          <span className={styles.genSub}>1970 - 1995 Dönemi</span>
-        </div>
-        <div className={styles.genMarker} style={{ top: '75%' }}>
-          <span className={styles.genBadge}>3. KUŞAK • TORUNLAR</span>
-          <span className={styles.genSub}>1996 - Günümüz</span>
-        </div>
+      {/* 2. GENERATION TIERS (VERTICAL GUIDES) */}
+      <div className={styles.generationGuides} style={{ transform: `translateY(${pan.y}px)` }}>
+        <div className={styles.tierTag} style={{ top: `${100 * zoom}px` }}>1. Kuşak (Kökler)</div>
+        <div className={styles.tierTag} style={{ top: `${340 * zoom}px` }}>2. Kuşak (Evlatlar)</div>
+        <div className={styles.tierTag} style={{ top: `${580 * zoom}px` }}>3. Kuşak (Torunlar)</div>
       </div>
 
-      {/* The Interactive Infinite Canvas */}
+      {/* 3. INTERACTIVE SVG CONNECTING LINES & CANVAS */}
       <div 
-        ref={containerRef}
-        className={`${styles.canvas} ${isDragging ? styles.dragging : ''}`}
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        onPointerCancel={handlePointerUp}
-        onWheel={handleWheel}
+        className={styles.canvasTransform}
+        style={{
+          transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
+          transformOrigin: '0 0'
+        }}
       >
-        <div 
-          className={styles.transformLayer}
-          style={{ transform: `translate(${position.x}px, ${position.y}px) scale(${scale})` }}
-        >
+        <svg className={styles.connectionsSvg} width="2400" height="1800">
           
-          {/* Glowing SVG Connection Cables */}
-          <svg className={styles.linesSvg}>
-            
-            {/* Evlilik Bağı (Mustafa & Ayşe) */}
-            <line x1="470" y1="170" x2="650" y2="170" stroke="rgba(245, 158, 11, 0.7)" strokeWidth="3" strokeDasharray="6,4" />
-            <circle cx="560" cy="170" r="10" fill="#0f172a" stroke="#f59e0b" strokeWidth="2" />
-            <text x="554" y="174" fill="#f59e0b" fontSize="11">💍</text>
+          {/* Marriage connection (Mustafa & Ayşe) */}
+          <path 
+            d="M 620 160 L 660 160" 
+            className={styles.marriageLine}
+          />
+          
+          {/* Generation 1 to Generation 2 (Branching line) */}
+          <path 
+            d="M 640 160 L 640 240 L 430 240 L 430 340" 
+            className={styles.lineageLine}
+          />
+          <path 
+            d="M 640 240 L 850 240 L 850 340" 
+            className={styles.lineageLine}
+          />
 
-            {/* Kökten 2. Kuşağa İnen Ana Dal */}
-            <path d="M 560 180 L 560 260" stroke="rgba(99, 102, 241, 0.6)" strokeWidth="3" fill="none" />
-            
-            {/* 2. Kuşak Yatay Dağıtım Çizgisi */}
-            <path d="M 370 260 L 870 260" stroke="rgba(99, 102, 241, 0.6)" strokeWidth="3" fill="none" />
-            
-            {/* Ali ve Zeynep'e İnen Çizgiler */}
-            <path d="M 370 260 L 370 380" stroke="rgba(99, 102, 241, 0.6)" strokeWidth="3" fill="none" />
-            <path d="M 870 260 L 870 380" stroke="rgba(99, 102, 241, 0.6)" strokeWidth="3" fill="none" />
+          {/* Ali Yılmaz to Children (Ahmet & Elif) */}
+          <path 
+            d="M 430 460 L 430 510 L 310 510 L 310 580" 
+            className={styles.lineageLine}
+          />
+          <path 
+            d="M 430 510 L 550 510 L 550 580" 
+            className={styles.lineageLine}
+          />
 
-            {/* Ali'den 3. Kuşağa (Ahmet & Elif) */}
-            <path d="M 370 460 L 370 530" stroke="rgba(99, 102, 241, 0.6)" strokeWidth="3" fill="none" />
-            <path d="M 240 530 L 500 530" stroke="rgba(99, 102, 241, 0.6)" strokeWidth="3" fill="none" />
-            <path d="M 240 530 L 240 640" stroke="rgba(99, 102, 241, 0.6)" strokeWidth="3" fill="none" />
-            <path d="M 500 530 L 500 640" stroke="rgba(99, 102, 241, 0.6)" strokeWidth="3" fill="none" />
+          {/* Zeynep to Child (Can) */}
+          <path 
+            d="M 850 460 L 850 580" 
+            className={styles.lineageLine}
+          />
+        </svg>
 
-            {/* Zeynep'ten Can'a */}
-            <path d="M 870 460 L 870 640" stroke="rgba(236, 72, 153, 0.6)" strokeWidth="3" fill="none" />
+        {/* 4. TREE NODES (CARDS) */}
+        {treeData.map(node => {
+          const isSelected = selectedNode?.id === node.id;
+          return (
+            <div
+              key={node.id}
+              className={`${styles.nodeCard} ${isSelected ? styles.nodeSelected : ''}`}
+              style={{ left: `${node.x}px`, top: `${node.y}px` }}
+              onClick={() => setSelectedNode(node)}
+            >
+              <div className={styles.nodeHeader}>
+                <span className={styles.nodeGenBadge}>{node.generation}. Kuşak</span>
+                {node.hasAudio && (
+                  <span className={styles.nodeAudioIcon} title="Ses Hatırası Var">
+                    <Volume2 size={11} />
+                  </span>
+                )}
+                <span className={`${styles.nodeStatusDot} ${node.isLiving ? styles.nodeLiving : styles.nodeDeceased}`} />
+              </div>
 
-          </svg>
-
-          {/* Render Nodes */}
-          {TREE_DATA.map(node => {
-            const isMatch = filterGen === 'all' || 
-              (filterGen === 'living' && node.isLiving) || 
-              node.generation === filterGen;
-
-            const isSelected = selectedNode?.id === node.id;
-
-            return (
-              <div 
-                key={node.id} 
-                className={`${styles.nodeWrapper} ${!isMatch ? styles.nodeDimmed : ''} ${isSelected ? styles.nodeSelected : ''}`}
-                style={{ transform: `translate(${node.x}px, ${node.y}px)` }}
-                onClick={() => setSelectedNode(node)}
-              >
-                <div className={styles.treeCard}>
-                  
-                  {/* Generation Pill */}
-                  <div className={styles.nodeHeaderRow}>
-                    <span className={styles.nodeGenBadge}>{node.generation}</span>
-                    {node.isLiving ? (
-                      <span className={styles.livingIndicator} title="Yaşıyor" />
-                    ) : (
-                      <span className={styles.deceasedIcon} title="Mazi">🕊️</span>
-                    )}
-                  </div>
-
-                  {/* Avatar & Info */}
-                  <div className={styles.nodeContent}>
-                    <div 
-                      className={styles.nodeAvatar} 
-                      style={{ 
-                        borderColor: node.avatarColor,
-                        boxShadow: `0 0 16px ${node.avatarColor}40`
-                      }}
-                    >
-                      {node.name.charAt(0)}
-                    </div>
-                    
-                    <div className={styles.nodeDetails}>
-                      <h4 className={styles.nodeName}>{node.name}</h4>
-                      <span className={styles.nodeRelation}>{node.relation}</span>
-                      <span className={styles.nodeYears}>🗓️ {node.years}</span>
-                      <span className={styles.nodeJob}>💼 {node.job}</span>
-                    </div>
-                  </div>
-
-                  {/* Card Actions */}
-                  <div className={styles.nodeCardFooter}>
-                    <Link 
-                      href={`/person/${node.id}`} 
-                      className={styles.profileLinkBtn}
-                      onPointerDown={(e) => e.stopPropagation()}
-                    >
-                      Profili Gör →
-                    </Link>
-                    <span className={styles.photoCountTag}>📸 {node.photoCount}</span>
-                  </div>
-
+              <div className={styles.nodeBody}>
+                <div className={styles.nodeAvatar}>
+                  {node.name.charAt(0)}
+                </div>
+                <div className={styles.nodeInfo}>
+                  <strong className={styles.nodeName}>{node.name}</strong>
+                  <span className={styles.nodeJob}>{node.job}</span>
+                  <span className={styles.nodeYears}>{node.years}</span>
                 </div>
               </div>
-            );
-          })}
+            </div>
+          );
+        })}
 
-        </div>
       </div>
 
-      {/* Selected Node Inspector Drawer */}
+      {/* 5. SELECTED NODE INSPECTOR DRAWER */}
       {selectedNode && (
-        <div className={styles.inspectorDrawer}>
-          <div className={styles.inspectorHeader}>
-            <div className={styles.inspectorAvatar} style={{ background: selectedNode.avatarColor }}>
+        <div className={styles.drawer}>
+          <div className={styles.drawerHeader}>
+            <span className={styles.drawerSubtitle}>{selectedNode.generation}. Kuşak Aile Bireyi</span>
+            <button className={styles.drawerCloseBtn} onClick={() => setSelectedNode(null)}>
+              <X size={16} />
+            </button>
+          </div>
+
+          <div className={styles.drawerProfile}>
+            <div className={styles.drawerAvatar}>
               {selectedNode.name.charAt(0)}
             </div>
             <div>
-              <h3>{selectedNode.name}</h3>
-              <span className={styles.inspectorRelation}>{selectedNode.relation} • {selectedNode.years}</span>
+              <h3 className={styles.drawerName}>{selectedNode.name}</h3>
+              <p className={styles.drawerJob}>{selectedNode.job}</p>
+              <span className={styles.drawerYears}>{selectedNode.years}</span>
             </div>
-            <button className={styles.inspectorClose} onClick={() => setSelectedNode(null)}>✕</button>
           </div>
 
-          <div className={styles.inspectorBody}>
-            <div className={styles.inspectorStatRow}>
-              <div><strong>Meslek:</strong> {selectedNode.job}</div>
-              <div><strong>Kuşak:</strong> {selectedNode.generation}</div>
-              <div><strong>Durum:</strong> {selectedNode.isLiving ? 'Yaşıyor' : 'Vefat Etti (Rahmetli)'}</div>
-              <div><strong>Fotoğraf & Belge:</strong> {selectedNode.photoCount} Adet</div>
+          <div className={styles.drawerActions}>
+            <Link href={`/person/${selectedNode.id}`} className={styles.drawerPrimaryBtn}>
+              <span>Tüm Profili Aç</span>
+              <ArrowUpRight size={14} />
+            </Link>
+            
+            <Link 
+              href={`/ai-chat?q=${encodeURIComponent(`${selectedNode.name} hakkında arşivde ne kayıt var?`)}`} 
+              className={styles.drawerSecondaryBtn}
+            >
+              <Sparkles size={14} />
+              <span>Yapay Zekâya Sor</span>
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {/* 6. ADD PERSON MODAL */}
+      {showAddModal && (
+        <div className={styles.modalBackdrop}>
+          <div className={styles.modalCard}>
+            <div className={styles.modalHeader}>
+              <h3 className={styles.modalTitle}>Soy Ağacına Yeni Birey Ekle</h3>
+              <button className={styles.modalCloseBtn} onClick={() => setShowAddModal(false)}>
+                <X size={18} />
+              </button>
             </div>
 
-            <div className={styles.inspectorActions}>
-              <Link href={`/person/${selectedNode.id}`} className={styles.inspectorPrimaryBtn}>
-                Tam Profili & Anıları Aç
-              </Link>
-              <Link href={`/ai-chat?q=${encodeURIComponent(`${selectedNode.name} hakkında ne biliyorsun?`)}`} className={styles.inspectorAiBtn}>
-                ✨ AI ile Sorgula
-              </Link>
-            </div>
+            <form onSubmit={handleAddPersonSubmit} className={styles.modalForm}>
+              <div>
+                <label className={styles.formLabel}>Bağlantı Kurulacak Kişi</label>
+                <div className={styles.targetPersonPill}>
+                  <strong>{selectedNode?.name || 'Mustafa Yılmaz'}</strong> ({selectedNode?.generation}. Kuşak)
+                </div>
+              </div>
+
+              <div>
+                <label className={styles.formLabel}>Akrabalık Bağı</label>
+                <select 
+                  value={newPersonRelation} 
+                  onChange={(e) => setNewPersonRelation(e.target.value as 'child' | 'spouse' | 'sibling')}
+                  className={styles.formSelect}
+                >
+                  <option value="child">Çocuğu Olarak Ekle (Alt Kuşak)</option>
+                  <option value="spouse">Eşi Olarak Ekle (Aynı Kuşak)</option>
+                  <option value="sibling">Kardeşi Olarak Ekle</option>
+                </select>
+              </div>
+
+              <div>
+                <label className={styles.formLabel}>Adı ve Soyadı</label>
+                <input 
+                  type="text" 
+                  required 
+                  placeholder="Örn: Mehmet Yılmaz"
+                  value={newPersonName}
+                  onChange={(e) => setNewPersonName(e.target.value)}
+                  className={styles.formInput}
+                />
+              </div>
+
+              <div>
+                <label className={styles.formLabel}>Meslek / Unvan</label>
+                <input 
+                  type="text" 
+                  placeholder="Örn: Doktor, Öğretmen..."
+                  value={newPersonJob}
+                  onChange={(e) => setNewPersonJob(e.target.value)}
+                  className={styles.formInput}
+                />
+              </div>
+
+              <div>
+                <label className={styles.formLabel}>Cinsiyet</label>
+                <div className={styles.radioGroup}>
+                  <label className={styles.radioLabel}>
+                    <input 
+                      type="radio" 
+                      name="gender" 
+                      checked={newPersonGender === 'male'} 
+                      onChange={() => setNewPersonGender('male')} 
+                    />
+                    <span>Erkek</span>
+                  </label>
+                  <label className={styles.radioLabel}>
+                    <input 
+                      type="radio" 
+                      name="gender" 
+                      checked={newPersonGender === 'female'} 
+                      onChange={() => setNewPersonGender('female')} 
+                    />
+                    <span>Kadın</span>
+                  </label>
+                </div>
+              </div>
+
+              <div className={styles.modalFooter}>
+                <button type="button" className={styles.modalCancelBtn} onClick={() => setShowAddModal(false)}>
+                  İptal
+                </button>
+                <button type="submit" className={styles.modalSubmitBtn}>
+                  Ağaca Yerleştir
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

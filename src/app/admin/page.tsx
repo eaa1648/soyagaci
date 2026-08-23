@@ -1,147 +1,85 @@
+'use client';
+
 import React from 'react';
 import { Card } from '@/components/ui/card';
-import Link from 'next/link';
+import { 
+  Users, 
+  UserCheck, 
+  Image as ImageIcon, 
+  Coins, 
+  Sparkles, 
+  CheckCircle2,
+  Activity
+} from 'lucide-react';
 
 export default function AdminDashboardPage() {
+  const STAT_CARDS = [
+    { label: 'Toplam Fert', value: '48', desc: '5 Kuşak', icon: Users },
+    { label: 'Aktif Kullanıcı', value: '12', desc: 'Bu hafta 4 yeni giriş', icon: UserCheck },
+    { label: 'Arşiv Belgesi', value: '342', desc: 'Fotoğraf, ses, tapu', icon: ImageIcon },
+    { label: 'Kasa Bakiyesi', value: '2.550', desc: 'Ortak Fon Kredisi', icon: Coins },
+    { label: 'AI Sorgulama', value: '184', desc: 'Bu ay yapılan tarama', icon: Sparkles },
+    { label: 'Bekleyen Onay', value: '2', desc: 'İnceleme bekliyor', icon: CheckCircle2 },
+  ];
+
   return (
-    <div>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
       
-      {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
-        <div>
-          <h1 style={{ fontSize: '2.2rem', fontWeight: 800, margin: '0 0 6px 0', color: '#ffffff' }}>Yönetim Kokpiti</h1>
-          <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.92rem' }}>
-            Platform geneli ve Yılmaz Ailesi veritabanının anlık operasyonel durumu
-          </p>
-        </div>
-        
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <Link 
-            href="/admin/approvals" 
-            style={{ 
-              padding: '10px 20px', 
-              borderRadius: '9999px', 
-              background: 'linear-gradient(135deg, #f59e0b, #d97706)', 
-              color: '#ffffff', 
-              textDecoration: 'none', 
-              fontWeight: 700,
-              fontSize: '0.88rem',
-              boxShadow: '0 4px 15px rgba(245, 158, 11, 0.35)'
-            }}
-          >
-            ⚡ 2 Onay Bekliyor
-          </Link>
-        </div>
+      {/* Stat Cards Grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
+        {STAT_CARDS.map((stat, i) => {
+          const Icon = stat.icon;
+          return (
+            <Card key={i} style={{ padding: '20px', background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-lg)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 500 }}>{stat.label}</span>
+                <Icon size={16} style={{ color: 'var(--text-muted)' }} />
+              </div>
+              <div style={{ fontFamily: 'var(--font-serif)', fontSize: '1.8rem', fontWeight: 600, color: 'var(--text-primary)', lineHeight: 1.1, marginBottom: '4px' }}>
+                {stat.value}
+              </div>
+              <span style={{ fontSize: '0.74rem', color: 'var(--text-secondary)' }}>{stat.desc}</span>
+            </Card>
+          );
+        })}
       </div>
 
-      {/* Top 4 Key Metric Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', marginBottom: '32px' }}>
-        <Card style={{ padding: '24px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
-            <span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', fontWeight: 600 }}>TOPLAM AİLE</span>
-            <span style={{ fontSize: '0.72rem', color: '#34d399', fontWeight: 700 }}>+12% bu ay</span>
-          </div>
-          <div style={{ fontSize: '2.4rem', fontWeight: 800, color: 'var(--brand-primary)', fontFamily: 'var(--font-display)' }}>1,245</div>
-          <span style={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>48 tanesi aktif yönetimde</span>
-        </Card>
-
-        <Card style={{ padding: '24px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
-            <span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', fontWeight: 600 }}>KAYITLI KİŞİ (NODES)</span>
-            <span style={{ fontSize: '0.72rem', color: '#34d399', fontWeight: 700 }}>+184 yeni</span>
-          </div>
-          <div style={{ fontSize: '2.4rem', fontWeight: 800, color: '#34d399', fontFamily: 'var(--font-display)' }}>14,890</div>
-          <span style={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>%94 doğruluk oranı</span>
-        </Card>
-
-        <Card style={{ padding: '24px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
-            <span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', fontWeight: 600 }}>MEDYA ARŞİVİ</span>
-            <span style={{ fontSize: '0.72rem', color: 'var(--accent-gold)', fontWeight: 700 }}>42.8 GB</span>
-          </div>
-          <div style={{ fontSize: '2.4rem', fontWeight: 800, color: '#fbbf24', fontFamily: 'var(--font-display)' }}>8,420</div>
-          <span style={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>Fotoğraf, Belge ve Ses</span>
-        </Card>
-
-        <Card style={{ padding: '24px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
-            <span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', fontWeight: 600 }}>YAPAY ZEKÂ İŞLEMİ</span>
-            <span style={{ fontSize: '0.72rem', color: '#c084fc', fontWeight: 700 }}>Gemini 2.5</span>
-          </div>
-          <div style={{ fontSize: '2.4rem', fontWeight: 800, color: '#c084fc', fontFamily: 'var(--font-display)' }}>3,650</div>
-          <span style={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>Sorgu & Transkripsiyon</span>
-        </Card>
-      </div>
-
-      {/* Main Grid: Activity Graph & System Status */}
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '28px', marginBottom: '32px' }}>
+      {/* Activity Logs & Health Section */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '20px' }}>
         
-        {/* Activity Visualizer Card */}
-        <Card style={{ padding: '28px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-            <h3 style={{ margin: 0, fontSize: '1.15rem', color: '#ffffff' }}>📈 Haftalık Aile Aktivitesi & Katılım Grafiği</h3>
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Son 7 Gün</span>
+        {/* System Health */}
+        <Card style={{ padding: '24px', background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-lg)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
+            <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.1rem', fontWeight: 600, color: 'var(--text-primary)', margin: 0 }}>Haftalık Arşiv Aktivitesi</h3>
+            <Activity size={16} style={{ color: 'var(--text-muted)' }} />
           </div>
-          
-          {/* Simulated Bars */}
-          <div style={{ height: '220px', display: 'flex', alignItems: 'flex-end', gap: '16px', padding: '20px 0 0 0', borderBottom: '1px solid var(--border-color)' }}>
-            {[
-              { day: 'Pzt', val: 40 },
-              { day: 'Sal', val: 65 },
-              { day: 'Çar', val: 45 },
-              { day: 'Per', val: 80 },
-              { day: 'Cum', val: 95 },
-              { day: 'Cmt', val: 120 },
-              { day: 'Paz', val: 140 }
-            ].map((d, i) => (
-              <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', height: '100%', justifyContent: 'flex-end' }}>
-                <div 
-                  style={{ 
-                    width: '100%', 
-                    height: `${(d.val / 140) * 100}%`, 
-                    background: i === 6 ? 'linear-gradient(180deg, #6366f1, #4f46e5)' : 'rgba(99, 102, 241, 0.25)', 
-                    borderRadius: '6px 6px 0 0',
-                    transition: 'all 0.3s ease',
-                    boxShadow: i === 6 ? '0 0 15px rgba(99, 102, 241, 0.5)' : 'none'
-                  }} 
-                />
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{d.day}</span>
+
+          <div style={{ display: 'flex', alignItems: 'flex-end', gap: '12px', height: '140px', padding: '10px 0', borderBottom: '1px solid var(--border-subtle)' }}>
+            {[40, 65, 30, 80, 95, 70, 85].map((val, idx) => (
+              <div key={idx} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
+                <div style={{ width: '100%', height: `${val}%`, background: 'var(--brand-surface)', border: '1px solid rgba(217, 119, 6, 0.3)', borderRadius: 'var(--radius-xs)' }} />
+                <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>{['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'][idx]}</span>
               </div>
             ))}
           </div>
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '14px', fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
+            <span>Toplam 24 Yeni Belge Eklendi</span>
+            <span style={{ color: 'var(--accent-emerald)', fontWeight: 600 }}>+18% Artış</span>
+          </div>
         </Card>
 
-        {/* Quick Health Status */}
-        <Card style={{ padding: '28px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+        {/* Security & Access */}
+        <Card style={{ padding: '24px', background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-lg)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           <div>
-            <h3 style={{ margin: '0 0 16px 0', fontSize: '1.15rem', color: '#ffffff' }}>🛡️ Sistem Sağlığı & Güvenlik</h3>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '14px', fontSize: '0.88rem' }}>
-              <li style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)' }}>
-                <span>Firebase Authentication</span>
-                <strong style={{ color: '#34d399' }}>● Çalışıyor</strong>
-              </li>
-              <li style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)' }}>
-                <span>Firestore Veritabanı</span>
-                <strong style={{ color: '#34d399' }}>● Güvenli</strong>
-              </li>
-              <li style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)' }}>
-                <span>Gemini AI API Ağ Geçidi</span>
-                <strong style={{ color: '#34d399' }}>● 120ms Yanıt</strong>
-              </li>
-              <li style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)' }}>
-                <span>Otomatik Günlük Yedekleme</span>
-                <strong style={{ color: '#34d399' }}>● 04:00 Başarılı</strong>
-              </li>
-            </ul>
+            <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.1rem', fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 8px 0' }}>Güvenlik & Yedekleme</h3>
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
+              Tüm aile soy kütüğü ve biyografiler otomatik günlük şifreli snapshot ile korunmaktadır.
+            </p>
           </div>
 
-          <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid var(--border-color)', display: 'flex', gap: '10px' }}>
-            <Link 
-              href="/admin/merge-tool" 
-              style={{ flex: 1, padding: '10px', background: 'rgba(99, 102, 241, 0.15)', border: '1px solid rgba(99, 102, 241, 0.3)', color: '#c7d2fe', borderRadius: '8px', textAlign: 'center', textDecoration: 'none', fontSize: '0.8rem', fontWeight: 700 }}
-            >
-              🔀 Çift Kayıt Kontrolü
-            </Link>
+          <div style={{ padding: '12px', background: 'var(--bg-main)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+            Son Başarılı Yedek: <strong>Bugün 04:00 (Otomatik)</strong>
           </div>
         </Card>
 

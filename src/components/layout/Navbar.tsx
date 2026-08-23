@@ -1,170 +1,122 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import styles from './Navbar.module.css';
+import { GitGraph, MessageSquareText, Landmark, ShieldAlert, Plus, Sun, Moon, Search } from 'lucide-react';
 
 export function Navbar() {
   const pathname = usePathname();
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 15);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('app-theme');
+      if (saved === 'light' || saved === 'dark') {
+        document.documentElement.setAttribute('data-theme', saved);
+        return saved;
+      }
+    }
+    return 'dark';
+  });
 
   const toggleTheme = () => {
-    const nextTheme = theme === 'dark' ? 'light' : 'dark';
-    setTheme(nextTheme);
-    document.documentElement.setAttribute('data-theme', nextTheme);
+    const next = theme === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('app-theme', next);
   };
 
-  const navItems = [
-    { href: '/', label: 'Ana Sayfa', icon: '🏛️' },
-    { href: '/tree', label: 'Soy Ağacı', icon: '🌳' },
-    { href: '/ai-chat', label: 'Hafıza AI', icon: '✨', badge: 'Gemini' },
-    { href: '/family-vault', label: 'Aile Kasası', icon: '💎' },
-    { href: '/admin', label: 'Yönetim', icon: '🛡️' },
+  const navLinks = [
+    { href: '/', label: 'Arşiv', icon: Search },
+    { href: '/tree', label: 'Soy Ağacı', icon: GitGraph },
+    { href: '/ai-chat', label: 'Hafıza Asistanı', icon: MessageSquareText },
+    { href: '/family-vault', label: 'Aile Kasası', icon: Landmark },
+    { href: '/admin', label: 'Yönetim', icon: ShieldAlert },
   ];
-
-  // If we are in the full-screen tree view, render minimal overlay navbar
-  const isTreeView = pathname === '/tree';
 
   return (
     <>
-      <header className={`${styles.header} ${scrolled ? styles.scrolled : ''} ${isTreeView ? styles.treeHeader : ''}`}>
-        <div className={styles.navContainer}>
+      <header className={styles.header}>
+        <div className={styles.container}>
           
-          {/* Logo & Family Crest */}
-          <Link href="/" className={styles.logoGroup}>
-            <div className={styles.crestIcon}>
-              <span>🌳</span>
+          {/* Logo / Brand */}
+          <Link href="/" className={styles.brand}>
+            <div className={styles.crest}>
+              <span className={styles.crestLetter}>Y</span>
             </div>
-            <div className={styles.logoText}>
-              <span className={styles.brandTitle}>AİLE HAFIZASI</span>
-              <span className={styles.brandSubtitle}>Yılmaz Hanedanı • 1880 - 2026</span>
+            <div className={styles.brandText}>
+              <span className={styles.brandTitle}>Yılmaz Ailesi</span>
+              <span className={styles.brandSubtitle}>Dijital Arşiv & Şecere</span>
             </div>
           </Link>
 
-          {/* Desktop Navigation Links */}
+          {/* Desktop Navigation */}
           <nav className={styles.desktopNav}>
-            {navItems.map((item) => {
-              const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
+            {navLinks.map(({ href, label, icon: Icon }) => {
+              const isActive = pathname === href || (href !== '/' && pathname.startsWith(href));
               return (
                 <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`${styles.navLink} ${isActive ? styles.activeLink : ''}`}
+                  key={href}
+                  href={href}
+                  className={`${styles.navItem} ${isActive ? styles.navItemActive : ''}`}
                 >
-                  <span className={styles.linkIcon}>{item.icon}</span>
-                  <span>{item.label}</span>
-                  {item.badge && <span className={styles.navBadge}>{item.badge}</span>}
+                  <Icon size={16} strokeWidth={isActive ? 2.2 : 1.8} className={styles.navIcon} />
+                  <span>{label}</span>
                 </Link>
               );
             })}
           </nav>
 
-          {/* Right Action Widgets */}
-          <div className={styles.rightActions}>
-            
-            {/* Live Credit Pill */}
-            <Link href="/family-vault" className={styles.creditPill} title="Mevcut Aile ve Bireysel Kredi Bakiyesi">
-              <span className={styles.creditSparkle}>✨</span>
-              <span className={styles.creditAmount}>2,550</span>
-              <span className={styles.creditUnit}>Kredi</span>
-            </Link>
-
-            {/* Quick Upload Action */}
-            <Link href="/media/upload" className={styles.uploadBtn}>
-              <span>+</span>
-              <span className={styles.uploadBtnText}>Hatıra Ekle</span>
+          {/* Right Actions */}
+          <div className={styles.actions}>
+            {/* Vault Balance Pill */}
+            <Link href="/family-vault" className={styles.vaultPill}>
+              <span className={styles.vaultDot} />
+              <span className={styles.vaultAmount}>2.550</span>
+              <span className={styles.vaultUnit}>Kredi</span>
             </Link>
 
             {/* Theme Toggle */}
             <button 
               onClick={toggleTheme} 
-              className={styles.themeToggle} 
+              className={styles.iconBtn} 
               aria-label="Temayı Değiştir"
-              title={theme === 'dark' ? 'Açık Temaya Geç' : 'Koyu Temaya Geç'}
+              title="Aydınlık / Karanlık Tema"
             >
-              {theme === 'dark' ? '☀️' : '🌙'}
+              {theme === 'dark' ? <Sun size={17} strokeWidth={1.8} /> : <Moon size={17} strokeWidth={1.8} />}
             </button>
 
-            {/* User Profile Avatar */}
-            <Link href="/admin" className={styles.userAvatarBtn} title="Hesabım & Roller">
-              <div className={styles.avatarCircle}>A</div>
-              <span className={styles.onlineDot} />
+            {/* Quick Upload Button */}
+            <Link href="/media/upload" className={styles.uploadBtn}>
+              <Plus size={15} strokeWidth={2.4} />
+              <span>Hatıra Ekle</span>
             </Link>
 
-            {/* Mobile Hamburger */}
-            <button 
-              className={styles.mobileHamburger}
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Menüyü Aç"
-            >
-              {mobileMenuOpen ? '✕' : '☰'}
-            </button>
+            {/* User Avatar */}
+            <Link href="/person/5" className={styles.avatarLink} title="Profilim (Ahmet Yılmaz)">
+              <div className={styles.avatar}>A</div>
+            </Link>
           </div>
 
         </div>
-
-        {/* Mobile Dropdown Menu */}
-        {mobileMenuOpen && (
-          <div className={styles.mobileMenuDropdown}>
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={styles.mobileMenuItem}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <span className={styles.linkIcon}>{item.icon}</span>
-                <span>{item.label}</span>
-                {item.badge && <span className={styles.navBadge}>{item.badge}</span>}
-              </Link>
-            ))}
-            <div className={styles.mobileMenuFooter}>
-              <Link 
-                href="/media/upload" 
-                className={styles.mobileUploadAction}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                + Yeni Hatıra veya Kişi Ekle
-              </Link>
-            </div>
-          </div>
-        )}
       </header>
 
-      {/* Mobile Bottom Navigation Bar (App Experience) */}
-      <div className={styles.bottomNav}>
-        {navItems.slice(0, 4).map((item) => {
-          const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
+      {/* Mobile Bottom Navigation */}
+      <nav className={styles.mobileNav}>
+        {navLinks.map(({ href, label, icon: Icon }) => {
+          const isActive = pathname === href || (href !== '/' && pathname.startsWith(href));
           return (
-            <Link 
-              key={item.href} 
-              href={item.href} 
-              className={`${styles.bottomNavItem} ${isActive ? styles.bottomNavActive : ''}`}
+            <Link
+              key={href}
+              href={href}
+              className={`${styles.mobileNavItem} ${isActive ? styles.mobileNavActive : ''}`}
             >
-              <span className={styles.bottomNavIcon}>{item.icon}</span>
-              <span className={styles.bottomNavLabel}>{item.label}</span>
+              <Icon size={20} strokeWidth={isActive ? 2.2 : 1.7} />
+              <span>{label}</span>
             </Link>
           );
         })}
-        <Link 
-          href="/media/upload" 
-          className={`${styles.bottomNavItem} ${pathname === '/media/upload' ? styles.bottomNavActive : ''}`}
-        >
-          <span className={styles.bottomNavIcon}>📸</span>
-          <span className={styles.bottomNavLabel}>Ekle</span>
-        </Link>
-      </div>
+      </nav>
     </>
   );
 }

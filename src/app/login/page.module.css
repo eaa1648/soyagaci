@@ -1,5 +1,5 @@
 .container {
-  min-height: calc(100vh - 72px);
+  min-height: calc(100vh - var(--header-height));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -8,69 +8,76 @@
 
 .authWrapper {
   width: 100%;
-  max-width: 980px;
+  max-width: 880px;
   display: grid;
   grid-template-columns: 1fr 1.1fr;
   border-radius: var(--radius-xl);
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: var(--shadow-lg), 0 0 50px -10px rgba(99, 102, 241, 0.25);
-  background: var(--bg-surface-solid);
+  border: 1px solid var(--border-medium);
+  box-shadow: var(--shadow-lg);
+  background: var(--bg-surface);
 }
 
 .visualSide {
   padding: 48px;
-  background: radial-gradient(circle at 0% 0%, rgba(99, 102, 241, 0.3) 0%, rgba(15, 23, 42, 0.95) 80%);
+  background: var(--bg-surface-raised);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  border-right: 1px solid var(--border-color);
-  position: relative;
+  border-right: 1px solid var(--border-subtle);
 }
 
-.quoteBadge {
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  color: var(--accent-gold);
-  margin-bottom: 20px;
+.crestBox {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-main);
+  border: 1px solid var(--border-medium);
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--brand-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
 }
 
 .quoteTitle {
   font-family: var(--font-serif);
-  font-size: 1.8rem;
+  font-size: 1.6rem;
+  font-weight: 500;
   line-height: 1.35;
-  color: #ffffff;
-  margin: 0 0 16px 0;
+  color: var(--text-primary);
+  margin-bottom: 14px;
 }
 
 .quoteSub {
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   color: var(--text-secondary);
   line-height: 1.6;
-  margin-bottom: 32px;
+  margin-bottom: 28px;
 }
 
-.vintageStamps {
+.vintageTags {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
 }
 
-.vintageStamps span {
-  font-size: 0.75rem;
-  font-weight: 700;
-  padding: 4px 12px;
-  border-radius: var(--radius-full);
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--border-color);
+.vintageTags span {
+  font-size: 0.74rem;
+  padding: 3px 10px;
+  border-radius: var(--radius-xs);
+  background: var(--bg-main);
+  border: 1px solid var(--border-subtle);
   color: var(--text-muted);
 }
 
 /* Login Card */
 .loginCard {
   padding: 48px;
-  background: rgba(15, 23, 42, 0.85);
+  background: var(--bg-surface);
   border: none;
   border-radius: 0;
   display: flex;
@@ -79,23 +86,19 @@
 }
 
 .header {
-  margin-bottom: 28px;
-}
-
-.logoBadge {
-  font-size: 2.2rem;
-  margin-bottom: 12px;
+  margin-bottom: 24px;
 }
 
 .title {
-  font-size: 1.75rem;
-  font-weight: 800;
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
+  font-weight: 600;
   margin: 0 0 6px 0;
-  color: #ffffff;
+  color: var(--text-primary);
 }
 
 .subtitle {
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   color: var(--text-secondary);
   margin: 0;
 }
@@ -103,46 +106,73 @@
 .form {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
+}
+
+.primaryBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 42px;
+  background: var(--brand-primary);
+  color: #FFFFFF;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 0.86rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.primaryBtn:hover {
+  background: var(--brand-primary-hover);
 }
 
 .demoLoginBtn {
   width: 100%;
-  padding: 12px;
-  border-radius: var(--radius-full);
-  background: rgba(245, 158, 11, 0.12);
-  border: 1px solid rgba(245, 158, 11, 0.35);
-  color: var(--accent-gold);
-  font-weight: 700;
-  font-size: 0.88rem;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface-raised);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  font-weight: 500;
+  font-size: 0.82rem;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
 
 .demoLoginBtn:hover {
-  background: rgba(245, 158, 11, 0.25);
-  color: #ffffff;
-  transform: translateY(-2px);
+  background: var(--bg-surface-hover);
+  color: var(--text-primary);
 }
 
 .footer {
-  margin-top: 24px;
+  margin-top: 20px;
   text-align: center;
-  font-size: 0.88rem;
-  color: var(--text-secondary);
+  font-size: 0.82rem;
+  color: var(--text-muted);
 }
 
 .link {
-  color: var(--brand-primary-hover);
-  font-weight: 700;
+  color: var(--brand-primary);
+  font-weight: 600;
   text-decoration: none;
 }
 
-@media (max-width: 840px) {
+.link:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 800px) {
   .authWrapper {
     grid-template-columns: 1fr;
   }
   .visualSide {
     display: none;
+  }
+  .loginCard {
+    padding: 32px 24px;
   }
 }

@@ -1,66 +1,79 @@
 import React from 'react';
 import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { MailCheck, ArrowRight, ArrowLeft } from 'lucide-react';
 
 export default function VerifyEmailPage() {
   return (
-    <div style={{ minHeight: 'calc(100vh - 72px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+    <div style={{ minHeight: 'calc(100vh - var(--header-height))', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
       <Card style={{ 
         width: '100%', 
-        maxWidth: '480px', 
-        padding: '40px', 
+        maxWidth: '440px', 
+        padding: '36px', 
         textAlign: 'center', 
         display: 'flex', 
         flexDirection: 'column', 
-        gap: '20px',
-        background: 'rgba(15, 23, 42, 0.85)',
-        backdropFilter: 'blur(20px)',
-        border: '1px solid rgba(99, 102, 241, 0.3)',
-        boxShadow: 'var(--shadow-lg), 0 0 40px rgba(99, 102, 241, 0.2)'
+        gap: '18px',
+        background: 'var(--bg-surface)',
+        border: '1px solid var(--border-medium)',
+        borderRadius: 'var(--radius-xl)',
+        boxShadow: 'var(--shadow-lg)'
       }}>
         
         <div style={{ 
-          width: '72px', 
-          height: '72px', 
-          borderRadius: '50%', 
-          background: 'rgba(99, 102, 241, 0.15)', 
-          color: '#818cf8', 
+          width: '56px', 
+          height: '56px', 
+          borderRadius: 'var(--radius-md)', 
+          background: 'var(--brand-surface)', 
+          color: 'var(--brand-primary)', 
           margin: '0 auto',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: '2.2rem',
-          border: '1px solid rgba(99, 102, 241, 0.3)',
-          boxShadow: '0 0 20px rgba(99, 102, 241, 0.3)'
         }}>
-          📩
+          <MailCheck size={28} />
         </div>
 
-        <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: '#ffffff', margin: 0 }}>
-          E-postanızı Doğrulayın
-        </h1>
-        
-        <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
-          Hesabınızı ve aile arşivinizin güvenliğini sağlamak için e-posta adresinize tek tıkla onaylama bağlantısı gönderdik.
-        </p>
-
-        <div style={{ padding: '16px', backgroundColor: 'rgba(245, 158, 11, 0.12)', borderRadius: '12px', border: '1px solid rgba(245, 158, 11, 0.3)' }}>
-          <p style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--accent-gold)', margin: 0 }}>
-            🎁 E-postanızı doğruladığınız an hesabınıza +100 Hoş Geldin Kredisi yüklenecektir!
+        <div>
+          <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.5rem', fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 6px 0' }}>
+            E-postanızı Doğrulayın
+          </h1>
+          <p style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
+            Hesabınızın güvenliğini sağlamak için e-posta adresinize bir doğrulama bağlantısı gönderdik.
           </p>
         </div>
-        
-        <div style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          <Link href="/login" style={{ textDecoration: 'none' }}>
-            <Button fullWidth variant="primary">
-              Giriş Ekranına Dön →
-            </Button>
+
+        <div style={{ marginTop: '10px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <Link href="/login" style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            gap: '6px', 
+            padding: '10px 16px', 
+            background: 'var(--brand-primary)', 
+            color: '#FFFFFF', 
+            borderRadius: 'var(--radius-sm)', 
+            textDecoration: 'none', 
+            fontSize: '0.84rem', 
+            fontWeight: 600 
+          }}>
+            <span>Giriş Ekranına Dön</span>
+            <ArrowRight size={14} />
           </Link>
-          <Link href="/" style={{ textDecoration: 'none' }}>
-            <Button fullWidth variant="outline">
-              Ana Sayfaya Git
-            </Button>
+          
+          <Link href="/" style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            gap: '6px', 
+            padding: '8px 16px', 
+            background: 'transparent', 
+            color: 'var(--text-muted)', 
+            textDecoration: 'none', 
+            fontSize: '0.8rem' 
+          }}>
+            <ArrowLeft size={13} />
+            <span>Ana Sayfa</span>
           </Link>
         </div>
       </Card>

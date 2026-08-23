@@ -3,108 +3,86 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { 
+  LayoutDashboard, 
+  Users, 
+  CheckCircle2, 
+  GitMerge, 
+  ScrollText, 
+  ArrowDownToLine, 
+  ShieldCheck,
+  ArrowLeft
+} from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
-  const menuItems = [
-    { href: '/admin', label: 'Dashboard & Analitik', icon: '📊' },
-    { href: '/admin/users', label: 'Kullanıcılar & Roller', icon: '👥' },
-    { href: '/admin/approvals', label: 'Onay Bekleyenler', icon: '✅', badge: '2 Yeni' },
-    { href: '/admin/merge-tool', label: 'AI Çift Kayıt Birleştirme', icon: '🔀', badge: 'AI' },
-    { href: '/admin/logs', label: 'Sistem & Denetim Logları', icon: '📜' },
-    { href: '/admin/import-export', label: 'Veri Aktarımı (Excel/JSON)', icon: '📥' },
+  const links = [
+    { href: '/admin', label: 'Genel Durum', icon: LayoutDashboard },
+    { href: '/admin/users', label: 'Kullanıcılar', icon: Users },
+    { href: '/admin/approvals', label: 'Onay Merkezi', icon: CheckCircle2 },
+    { href: '/admin/merge-tool', label: 'Kayıt Birleştirme', icon: GitMerge },
+    { href: '/admin/logs', label: 'Denetim Logları', icon: ScrollText },
+    { href: '/admin/import-export', label: 'İçe / Dışa Aktar', icon: ArrowDownToLine },
   ];
 
   return (
-    <div style={{ display: 'flex', minHeight: 'calc(100vh - 72px)', backgroundColor: 'var(--bg-main)' }}>
+    <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto', padding: '32px 24px 80px 24px' }}>
       
-      {/* Executive Sidebar */}
-      <aside style={{ 
-        width: '280px', 
-        backgroundColor: 'rgba(10, 15, 30, 0.95)', 
-        borderRight: '1px solid var(--border-color)',
-        padding: '24px 16px',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '24px',
-        flexShrink: 0
-      }}>
-        {/* User Role Card */}
-        <div style={{ padding: '14px', background: 'rgba(255, 255, 255, 0.04)', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-            <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'linear-gradient(135deg, #10b981, #059669)', color: '#fff', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              A
-            </div>
-            <div>
-              <strong style={{ fontSize: '0.92rem', color: '#ffffff', display: 'block' }}>Ahmet Yılmaz</strong>
-              <span style={{ fontSize: '0.72rem', color: '#34d399', fontWeight: 700 }}>● Platform & Aile Admin</span>
-            </div>
+      {/* Top Header */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '28px', paddingBottom: '20px', borderBottom: '1px solid var(--border-subtle)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ width: '36px', height: '36px', borderRadius: 'var(--radius-sm)', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--brand-primary)' }}>
+            <ShieldCheck size={18} />
           </div>
-          <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
-            Yılmaz Hanedanı Yöneticisi
+          <div>
+            <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.2rem', fontWeight: 600, color: 'var(--text-primary)', margin: 0 }}>Yönetim Merkezi</h2>
+            <span style={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>Platform & Aile İdare Paneli</span>
           </div>
         </div>
 
-        {/* Navigation Items */}
-        <nav style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-          <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', padding: '0 12px 6px 12px' }}>
-            YÖNETİM MODÜLLERİ
-          </span>
+        <Link href="/" style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <ArrowLeft size={14} />
+          <span>Arşive Dön</span>
+        </Link>
+      </div>
 
-          {menuItems.map((item) => {
-            const isActive = pathname === item.href;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '10px 14px',
-                  borderRadius: '10px',
-                  textDecoration: 'none',
-                  color: isActive ? '#ffffff' : 'var(--text-secondary)',
-                  backgroundColor: isActive ? 'var(--brand-primary)' : 'transparent',
-                  fontWeight: isActive ? 700 : 500,
-                  fontSize: '0.88rem',
-                  transition: 'all 0.2s ease',
-                  boxShadow: isActive ? '0 4px 15px rgba(99, 102, 241, 0.4)' : 'none'
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <span>{item.icon}</span>
-                  <span>{item.label}</span>
-                </div>
-                {item.badge && (
-                  <span style={{
-                    fontSize: '0.68rem',
-                    padding: '2px 8px',
-                    borderRadius: '9999px',
-                    background: isActive ? 'rgba(255, 255, 255, 0.2)' : 'rgba(245, 158, 11, 0.15)',
-                    color: isActive ? '#ffffff' : 'var(--accent-gold)',
-                    fontWeight: 700
-                  }}>
-                    {item.badge}
-                  </span>
-                )}
-              </Link>
-            );
-          })}
-        </nav>
+      {/* Nav Tabs */}
+      <div style={{ display: 'flex', gap: '6px', marginBottom: '32px', overflowX: 'auto', paddingBottom: '4px' }}>
+        {links.map(({ href, label, icon: Icon }) => {
+          const isActive = pathname === href;
+          return (
+            <Link
+              key={href}
+              href={href}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '8px 14px',
+                borderRadius: 'var(--radius-full)',
+                background: isActive ? 'var(--text-primary)' : 'var(--bg-surface)',
+                color: isActive ? 'var(--bg-main)' : 'var(--text-secondary)',
+                border: `1px solid ${isActive ? 'var(--text-primary)' : 'var(--border-subtle)'}`,
+                fontSize: '0.82rem',
+                fontWeight: isActive ? 600 : 500,
+                textDecoration: 'none',
+                whiteSpace: 'nowrap',
+                transition: 'all 0.15s ease'
+              }}
+            >
+              <Icon size={14} />
+              <span>{label}</span>
+            </Link>
+          );
+        })}
+      </div>
 
-        <div style={{ marginTop: 'auto', paddingTop: '16px', borderTop: '1px solid var(--border-color)' }}>
-          <Link href="/" style={{ display: 'block', padding: '10px 14px', color: 'var(--text-muted)', textDecoration: 'none', fontSize: '0.85rem' }}>
-            ← Site Arayüzüne Dön
-          </Link>
-        </div>
-      </aside>
-
-      {/* Admin Content Area */}
-      <main style={{ flex: 1, padding: '36px 40px', overflowY: 'auto' }}>
+      {/* Content */}
+      <div>
         {children}
-      </main>
+      </div>
+
     </div>
   );
 }

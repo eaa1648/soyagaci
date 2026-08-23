@@ -1,91 +1,89 @@
 import React from 'react';
 import styles from './PersonCard.module.css';
+import { Card } from '@/components/ui/card';
 import Link from 'next/link';
+import { MapPin, Calendar, Volume2, ArrowUpRight } from 'lucide-react';
 
-export interface PersonCardProps {
+interface PersonCardProps {
   id: string;
   name: string;
-  years: string;
+  birthYear?: number;
+  deathYear?: number;
+  birthPlace?: string;
+  isLiving?: boolean;
   job?: string;
   generation?: string;
-  relation?: string;
-  location?: string;
-  photoCount?: number;
-  storyCount?: number;
   hasAudio?: boolean;
-  isLiving?: boolean;
-  avatarColor?: string;
 }
 
-export function PersonCard({ 
-  id, 
-  name, 
-  years, 
-  job, 
-  generation = '2. Kuşak',
-  relation,
-  location = 'Bursa',
-  photoCount = 12,
-  storyCount = 3,
-  hasAudio = true,
-  isLiving = false,
-  avatarColor
+export function PersonCard({
+  id,
+  name,
+  birthYear,
+  deathYear,
+  birthPlace,
+  isLiving,
+  job,
+  generation,
+  hasAudio,
 }: PersonCardProps) {
-  const initial = name.charAt(0);
+  const yearsText = birthYear 
+    ? `${birthYear} — ${isLiving ? 'Günümüz' : (deathYear || 'Mazi')}`
+    : 'Tarih Bilgisi Yok';
 
   return (
-    <Link href={`/person/${id}`} className={styles.cardLink}>
-      <div className={styles.card}>
+    <Card className={styles.card} hoverable>
+      <Link href={`/person/${id}`} className={styles.linkWrapper}>
         
-        {/* Top Badges */}
+        {/* Top Meta Row */}
         <div className={styles.topRow}>
-          <span className={styles.generationBadge}>{generation}</span>
-          {relation && <span className={styles.relationBadge}>{relation}</span>}
-          {isLiving ? (
-            <span className={styles.livingDot} title="Yaşıyor" />
-          ) : (
-            <span className={styles.memoryLeaf} title="Mazi & Rahmetli">🕊️</span>
-          )}
+          <span className={styles.genBadge}>{generation || '1. Kuşak'}</span>
+          
+          <div className={styles.statusGroup}>
+            {hasAudio && (
+              <span className={styles.audioPill} title="Ses Kaydı Mevcut">
+                <Volume2 size={12} strokeWidth={2.2} />
+                <span>Ses</span>
+              </span>
+            )}
+            <span className={`${styles.statusBadge} ${isLiving ? styles.living : styles.deceased}`}>
+              <span className={styles.statusDot} />
+              {isLiving ? 'Yaşıyor' : 'Mazi'}
+            </span>
+          </div>
         </div>
 
-        {/* Center Portrait */}
-        <div className={styles.portraitSection}>
-          <div className={styles.portraitFrame} style={{ borderColor: avatarColor || 'rgba(99, 102, 241, 0.4)' }}>
-            <div className={styles.avatarLetter}>{initial}</div>
+        {/* Person Identity */}
+        <div className={styles.identity}>
+          <div className={styles.avatarBox}>
+            <span className={styles.avatarLetter}>{name.charAt(0)}</span>
           </div>
-          <div className={styles.haloEffect} />
-        </div>
-        
-        {/* Info */}
-        <div className={styles.info}>
-          <h3 className={styles.name}>{name}</h3>
-          <div className={styles.yearTag}>
-            <span>🗓️</span>
-            <span>{years}</span>
-          </div>
-          
-          <div className={styles.metaRow}>
-            {job && <span className={styles.jobTag}>💼 {job}</span>}
-            {location && <span className={styles.locationTag}>📍 {location}</span>}
+
+          <div className={styles.mainInfo}>
+            <div className={styles.nameRow}>
+              <h3 className={styles.name}>{name}</h3>
+              <ArrowUpRight size={15} className={styles.arrowIcon} />
+            </div>
+            {job && <p className={styles.job}>{job}</p>}
           </div>
         </div>
-        
-        {/* Footer Stats */}
-        <div className={styles.cardFooter}>
-          <div className={styles.statItem} title={`${photoCount} Fotoğraf`}>
-            <span>📸</span> <span>{photoCount}</span>
+
+        {/* Footer Details */}
+        <div className={styles.footer}>
+          <div className={styles.metaItem}>
+            <Calendar size={13} strokeWidth={1.8} className={styles.metaIcon} />
+            <span>{yearsText}</span>
           </div>
-          <div className={styles.statItem} title={`${storyCount} Hatıra Kaydı`}>
-            <span>📖</span> <span>{storyCount}</span>
-          </div>
-          {hasAudio && (
-            <div className={styles.audioBadge} title="Sesli Hatıra Kaydı Mevcut">
-              <span>🎙️ Ses Kaydı</span>
+
+          {birthPlace && (
+            <div className={styles.metaItem}>
+              <MapPin size={13} strokeWidth={1.8} className={styles.metaIcon} />
+              <span>{birthPlace}</span>
             </div>
           )}
         </div>
 
-      </div>
-    </Link>
+      </Link>
+    </Card>
   );
 }
