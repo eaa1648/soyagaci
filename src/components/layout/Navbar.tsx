@@ -1,13 +1,18 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import styles from './Navbar.module.css';
-import { GitGraph, MessageSquareText, Landmark, ShieldAlert, Plus, Sun, Moon, Search } from 'lucide-react';
+import { GitGraph, MessageSquareText, Landmark, ShieldAlert, Plus, Sun, Moon, Search, LogOut, User, Shield } from 'lucide-react';
+import { getCurrentUser, logoutUser, UserProfile, DEMO_ACCOUNTS } from '@/lib/services/authService';
 
 export function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const [currentUser, setCurrentUserState] = useState<UserProfile>(getCurrentUser());
+  const [showUserMenu, setShowUserMenu] = useState(false);
+
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('app-theme');
@@ -19,11 +24,26 @@ export function Navbar() {
     return 'dark';
   });
 
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setCurrentUserState(getCurrentUser());
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
   const toggleTheme = () => {
     const next = theme === 'dark' ? 'light' : 'dark';
     setTheme(next);
     document.documentElement.setAttribute('data-theme', next);
     localStorage.setItem('app-theme', next);
+  };
+
+  const handleLogout = () => {
+    logoutUser();
+    setCurrentUserState(DEMO_ACCOUNTS.member.profile);
+    setShowUserMenu(false);
+    router.push('/login');
   };
 
   const navLinks = [
@@ -72,7 +92,7 @@ export function Navbar() {
             {/* Vault Balance Pill */}
             <Link href="/family-vault" className={styles.vaultPill}>
               <span className={styles.vaultDot} />
-              <span className={styles.vaultAmount}>2.550</span>
+              <span className={styles.vaultAmount}>{currentUser.credits.toLocaleString('tr-TR')}</span>
               <span className={styles.vaultUnit}>Kredi</span>
             </Link>
 
@@ -92,10 +112,66 @@ export function Navbar() {
               <span>Hatıra Ekle</span>
             </Link>
 
-            {/* User Avatar */}
-            <Link href="/person/5" className={styles.avatarLink} title="Profilim (Ahmet Yılmaz)">
-              <div className={styles.avatar}>A</div>
-            </Link>
+            {/* User Dropdown */}
+            <div style={{ position: 'relative' }}>
+              <button 
+                onClick={() => setShowUserMenu(!showUserMenu)}
+                className={styles.avatarBtn} 
+                title={`${currentUser.name} (${currentUser.roleLabel})`}
+              >
+                <div className={styles.avatar}>{currentUser.name.charAt(0)}</div>
+              </button>
+
+              {showUserMenu && (
+                <div style={{
+                  position: 'absolute',
+                  top: '100%',
+                  right: 0,
+                  marginTop: '8px',
+                  width: '220px',
+                  background: 'var(--bg-surface-solid)',
+                  border: '1px solid var(--border-medium)',
+                  borderRadius: 'var(--radius-md)',
+                  boxShadow: 'var(--shadow-lg)',
+                  padding: '12px',
+                  zIndex: 200,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '8px'
+                }}>
+                  <div style={{ paddingBottom: '8px', borderBottom: '1px solid var(--border-subtle)' }}>
+                    <strong style={{ display: 'block', fontSize: '0.86rem', color: 'var(--text-primary)' }}>{currentUser.name}</strong>
+                    <span style={{ fontSize: '0.74rem', color: 'var(--brand-primary)', fontWeight: 600 }}>{currentUser.roleLabel}</span>
+                  </div>
+
+                  <Link 
+                    href="/admin" 
+                    onClick={() => setShowUserMenu(false)}
+                    style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 8px', borderRadius: 'var(--radius-xs)', color: 'var(--text-secondary)', fontSize: '0.8rem', textDecoration: 'none' }}
+                  >
+                    <Shield size={14} />
+                    <span>Yönetim Paneli</span>
+                  </Link>
+
+                  <Link 
+                    href="/login" 
+                    onClick={() => setShowUserMenu(false)}
+                    style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 8px', borderRadius: 'var(--radius-xs)', color: 'var(--text-secondary)', fontSize: '0.8rem', textDecoration: 'none' }}
+                  >
+                    <User size={14} />
+                    <span>Hesap Değiştir</span>
+                  </Link>
+
+                  <button 
+                    onClick={handleLogout}
+                    style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 8px', borderRadius: 'var(--radius-xs)', color: 'var(--accent-rose)', background: 'transparent', border: 'none', fontSize: '0.8rem', cursor: 'pointer', textAlign: 'left', width: '100%' }}
+                  >
+                    <LogOut size={14} />
+                    <span>Çıkış Yap</span>
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
 
         </div>

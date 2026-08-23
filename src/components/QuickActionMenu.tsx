@@ -14,17 +14,25 @@ import {
   X,
   Plus
 } from 'lucide-react';
+import { savePerson, PersonRecord } from '@/lib/services/personService';
+
+const RELATIVE_QUICK_BUTTONS = [
+  { label: 'Anne / Baba', key: 'parent' },
+  { label: 'Eş / Hayat Arkadaşı', key: 'spouse' },
+  { label: 'Evlat (Oğul/Kız)', key: 'child' },
+  { label: 'Kardeş', key: 'sibling' },
+  { label: 'Kuzen', key: 'cousin' },
+  { label: 'Dayı / Amca', key: 'uncle' },
+  { label: 'Teyze / Hala', key: 'aunt' },
+  { label: 'Torun / Yeğen', key: 'grandchild' },
+];
 
 export function QuickActionMenu() {
   const [modalType, setModalType] = useState<string | null>(null);
-
-  const relativeTypes = [
-    { label: 'Anne Ekle', key: 'mother' },
-    { label: 'Baba Ekle', key: 'father' },
-    { label: 'Eş Ekle', key: 'spouse' },
-    { label: 'Çocuk Ekle', key: 'child' },
-    { label: 'Kardeş Ekle', key: 'sibling' },
-  ];
+  const [name, setName] = useState('');
+  const [birthYear, setBirthYear] = useState('');
+  const [birthPlace, setBirthPlace] = useState('Bursa');
+  const [job, setJob] = useState('');
 
   const mediaTypes = [
     { label: 'Fotoğraf', icon: ImageIcon, href: '/media/upload?type=photo' },
@@ -34,6 +42,41 @@ export function QuickActionMenu() {
     { label: 'Hatıra Yaz', icon: BookOpen, href: '/media/upload?type=story' },
   ];
 
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim()) return;
+
+    const newId = `p-${Date.now()}`;
+    const newPersonRecord: PersonRecord = {
+      id: newId,
+      name: name,
+      title: `${modalType} • Aile Kütüğü Kaydı`,
+      years: birthYear ? `${birthYear} — Günümüz` : `${new Date().getFullYear()} — Günümüz`,
+      job: job || 'Aile Üyesi',
+      birthPlace: birthPlace,
+      bloodType: 'A Rh (+)',
+      nickname: name.split(' ')[0],
+      generation: '3. Kuşak',
+      branch: 'bursa',
+      isLiving: true,
+      hasAudio: false,
+      biography: `Aile arşivine ${modalType} olarak eklenmiştir.`,
+      milestones: [{ year: birthYear || '2026', title: 'Doğum', desc: `${birthPlace} doğumlu.`, tag: 'Doğum' }],
+      relatives: [],
+      photos: [],
+      stories: [],
+      audioTitle: '',
+      audioDuration: ''
+    };
+
+    await savePerson(newPersonRecord);
+    alert(`${name} (${modalType}) başarıyla soyağacına ve aile kütüğüne eklendi!`);
+    setModalType(null);
+    setName('');
+    setJob('');
+    setBirthYear('');
+  };
+
   return (
     <>
       <Card className={styles.menuContainer}>
@@ -41,11 +84,11 @@ export function QuickActionMenu() {
         {/* Relative Quick Actions */}
         <div className={styles.sectionHeader}>
           <UserPlus size={16} className={styles.titleIcon} />
-          <h4 className={styles.title}>Soy Ağacına Hızlı Ekle</h4>
+          <h4 className={styles.title}>Soy Ağacına Akraba Ekle</h4>
         </div>
         
         <div className={styles.relativesGrid}>
-          {relativeTypes.map((item) => (
+          {RELATIVE_QUICK_BUTTONS.map((item) => (
             <button
               key={item.key}
               className={styles.relativeBtn}
@@ -84,27 +127,54 @@ export function QuickActionMenu() {
         <div className={styles.modalBackdrop} onClick={() => setModalType(null)}>
           <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
             <div className={styles.modalHeader}>
-              <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.2rem', color: 'var(--text-primary)', margin: 0 }}>{modalType}</h3>
+              <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.2rem', color: 'var(--text-primary)', margin: 0 }}>
+                {modalType} Ekle
+              </h3>
               <button className={styles.modalClose} onClick={() => setModalType(null)}>
                 <X size={16} />
               </button>
             </div>
             
             <p className={styles.modalDesc}>
-              Ağaçtaki seçili kişiye doğrudan bağlı yeni bir aile bireyi oluşturun.
+              Ailenizin ortak kütüğüne ve soyağacına yeni bir <strong>{modalType}</strong> kaydı oluşturun.
             </p>
 
-            <form onSubmit={(e) => { e.preventDefault(); alert(`${modalType} başarıyla ağaca eklendi!`); setModalType(null); }} className={styles.modalForm}>
-              <input type="text" placeholder="Ad ve Soyad" required className={styles.modalInput} />
+            <form onSubmit={handleSave} className={styles.modalForm}>
+              <input 
+                type="text" 
+                placeholder="Ad ve Soyad" 
+                required 
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className={styles.modalInput} 
+              />
               <div className={styles.modalRow}>
-                <input type="text" placeholder="Doğum Yılı (Örn: 1952)" className={styles.modalInput} />
-                <input type="text" placeholder="Doğum Yeri" className={styles.modalInput} />
+                <input 
+                  type="text" 
+                  placeholder="Doğum Yılı (Örn: 1985)" 
+                  value={birthYear}
+                  onChange={(e) => setBirthYear(e.target.value)}
+                  className={styles.modalInput} 
+                />
+                <input 
+                  type="text" 
+                  placeholder="Doğum Yeri (Örn: Bursa)" 
+                  value={birthPlace}
+                  onChange={(e) => setBirthPlace(e.target.value)}
+                  className={styles.modalInput} 
+                />
               </div>
-              <input type="text" placeholder="Meslek" className={styles.modalInput} />
+              <input 
+                type="text" 
+                placeholder="Meslek / Unvan" 
+                value={job}
+                onChange={(e) => setJob(e.target.value)}
+                className={styles.modalInput} 
+              />
               
               <div className={styles.modalActions}>
                 <button type="button" className={styles.modalCancelBtn} onClick={() => setModalType(null)}>İptal</button>
-                <button type="submit" className={styles.modalSubmitBtn}>Kaydet ve Ağaca Yerleştir</button>
+                <button type="submit" className={styles.modalSubmitBtn}>Kaydet ve Kütüğe İşle</button>
               </div>
             </form>
           </div>
