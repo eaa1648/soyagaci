@@ -13,7 +13,12 @@ import {
   X, 
   ArrowUpRight, 
   Sparkles, 
-  Volume2
+  Volume2,
+  Filter,
+  Crown,
+  FileSpreadsheet,
+  CheckCircle2,
+  MapPin
 } from 'lucide-react';
 import { getPersons, savePerson, PersonRecord } from '@/lib/services/personService';
 
@@ -27,6 +32,10 @@ interface TreeNodeData {
   isLiving: boolean;
   hasAudio?: boolean;
   relationRole?: string;
+  branch?: string; // 'bursa', 'istanbul', 'izmir'
+  side?: 'father' | 'mother' | 'both'; // Baba tarafı / Anne tarafı
+  cemetery?: string;
+  isVerified?: boolean;
   x: number;
   y: number;
   parents?: string[];
@@ -97,6 +106,10 @@ const INITIAL_NODES: TreeNodeData[] = [
     gender: 'male',
     isLiving: false,
     hasAudio: true,
+    branch: 'bursa',
+    side: 'father',
+    cemetery: 'Bursa Emir Sultan Mezarlığı',
+    isVerified: true,
     spouseId: '2',
     children: ['3', '4'],
     x: 400,
@@ -111,6 +124,9 @@ const INITIAL_NODES: TreeNodeData[] = [
     gender: 'female',
     isLiving: true,
     hasAudio: true,
+    branch: 'bursa',
+    side: 'mother',
+    isVerified: true,
     spouseId: '1',
     children: ['3', '4'],
     x: 660,
@@ -126,6 +142,9 @@ const INITIAL_NODES: TreeNodeData[] = [
     gender: 'male',
     isLiving: true,
     hasAudio: true,
+    branch: 'istanbul',
+    side: 'both',
+    isVerified: true,
     parents: ['1', '2'],
     children: ['5', '6'],
     x: 320,
@@ -139,6 +158,9 @@ const INITIAL_NODES: TreeNodeData[] = [
     generation: 2,
     gender: 'female',
     isLiving: true,
+    branch: 'izmir',
+    side: 'both',
+    isVerified: true,
     parents: ['1', '2'],
     children: ['7'],
     x: 740,
@@ -153,6 +175,9 @@ const INITIAL_NODES: TreeNodeData[] = [
     generation: 3,
     gender: 'male',
     isLiving: true,
+    branch: 'istanbul',
+    side: 'father',
+    isVerified: true,
     parents: ['3'],
     x: 200,
     y: 580,
@@ -165,6 +190,9 @@ const INITIAL_NODES: TreeNodeData[] = [
     generation: 3,
     gender: 'female',
     isLiving: true,
+    branch: 'istanbul',
+    side: 'father',
+    isVerified: true,
     parents: ['3'],
     x: 440,
     y: 580,
@@ -177,6 +205,9 @@ const INITIAL_NODES: TreeNodeData[] = [
     generation: 3,
     gender: 'male',
     isLiving: true,
+    branch: 'izmir',
+    side: 'mother',
+    isVerified: true,
     parents: ['4'],
     x: 740,
     y: 580,
@@ -192,6 +223,10 @@ export function FamilyTreeViewer() {
   const [selectedNode, setSelectedNode] = useState<TreeNodeData | null>(INITIAL_NODES[0]);
   const [searchQuery, setSearchQuery] = useState('');
   
+  // Dynamic Canvas Filters
+  const [filterSide, setFilterSide] = useState<'all' | 'father' | 'mother'>('all');
+  const [filterLiving, setFilterLiving] = useState<'all' | 'living' | 'deceased'>('all');
+
   // Add Relative Modal State
   const [showAddModal, setShowAddModal] = useState(false);
   const [newPersonName, setNewPersonName] = useState('');
@@ -206,7 +241,6 @@ export function FamilyTreeViewer() {
   useEffect(() => {
     getPersons().then(persons => {
       if (persons && persons.length > INITIAL_NODES.length) {
-        // Map any extra added persons to tree
         const extraNodes: TreeNodeData[] = persons.slice(INITIAL_NODES.length).map((p, idx) => ({
           id: p.id,
           name: p.name,
@@ -215,6 +249,7 @@ export function FamilyTreeViewer() {
           generation: parseInt(p.generation) || 3,
           gender: 'male',
           isLiving: p.isLiving,
+          isVerified: true,
           x: 200 + (idx * 220),
           y: 580
         }));
@@ -222,6 +257,15 @@ export function FamilyTreeViewer() {
       }
     });
   }, []);
+
+  // Filtered nodes
+  const visibleNodes = treeData.filter(node => {
+    const matchesSide = filterSide === 'all' || node.side === 'both' || node.side === filterSide;
+    const matchesLiving = filterLiving === 'all' || 
+                          (filterLiving === 'living' && node.isLiving) ||
+                          (filterLiving === 'deceased' && !node.isLiving);
+    return matchesSide && matchesLiving;
+  });
 
   // Pan handlers
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -285,6 +329,7 @@ export function FamilyTreeViewer() {
       gender: matchedOpt.gender as 'male' | 'female',
       isLiving: true,
       relationRole: matchedOpt.label,
+      isVerified: false,
       x: targetX,
       y: targetY,
     };
@@ -292,7 +337,7 @@ export function FamilyTreeViewer() {
     setTreeData(prev => [...prev, newTreeNode]);
     setSelectedNode(newTreeNode);
 
-    // Save to unified PersonService so it persists across entire app!
+    // Save to unified PersonService
     const newPersonRecord: PersonRecord = {
       id: newId,
       name: newPersonName,
@@ -363,12 +408,40 @@ export function FamilyTreeViewer() {
           <Search size={14} className={styles.searchIcon} />
           <input 
             type="text" 
-            placeholder="Ağaçta akraba ara (Dayı, Amca, Kuzen...)" 
+            placeholder="Ağaçta kişi ara..." 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSearchSelect(searchQuery)}
             className={styles.searchInput}
           />
+        </div>
+
+        <div className={styles.toolbarDivider} />
+
+        {/* Dynamic Filters Bar */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <button 
+            onClick={() => setFilterSide(s => s === 'all' ? 'father' : s === 'father' ? 'mother' : 'all')}
+            className={styles.toolBtn}
+            title="Soy Kolu Filtresi"
+            style={{ color: filterSide !== 'all' ? 'var(--brand-primary)' : 'inherit', fontWeight: filterSide !== 'all' ? 600 : 500 }}
+          >
+            <Filter size={14} />
+            <span className={styles.btnText}>
+              {filterSide === 'all' ? 'Tüm Kollar' : filterSide === 'father' ? 'Baba Tarafı' : 'Anne Tarafı'}
+            </span>
+          </button>
+
+          <button 
+            onClick={() => setFilterLiving(l => l === 'all' ? 'living' : l === 'living' ? 'deceased' : 'all')}
+            className={styles.toolBtn}
+            title="Yaşam Durumu Filtresi"
+            style={{ color: filterLiving !== 'all' ? 'var(--brand-primary)' : 'inherit', fontWeight: filterLiving !== 'all' ? 600 : 500 }}
+          >
+            <span className={styles.btnText}>
+              {filterLiving === 'all' ? 'Tüm Fertler' : filterLiving === 'living' ? 'Sadece Yaşayanlar' : 'Mazi (Vefat)'}
+            </span>
+          </button>
         </div>
 
         <div className={styles.toolbarDivider} />
@@ -388,10 +461,20 @@ export function FamilyTreeViewer() {
 
         <div className={styles.toolbarDivider} />
 
-        {/* Export and Add */}
+        {/* e-Devlet & Historical Tree Shortcuts */}
+        <Link href="/import/e-devlet" className={styles.toolBtn} title="e-Devlet'ten İçe Aktar">
+          <FileSpreadsheet size={15} style={{ color: 'var(--brand-primary)' }} />
+          <span className={styles.btnText}>e-Devlet Aktar</span>
+        </Link>
+
+        <Link href="/kesfet" className={styles.toolBtn} title="Tarihi Şecereleri Keşfet">
+          <Crown size={15} style={{ color: 'var(--accent-emerald)' }} />
+          <span className={styles.btnText}>Osmanlı Vitrini</span>
+        </Link>
+
         <button className={styles.toolBtn} onClick={() => alert('Yüksek çözünürlüklü SVG soyağacı şeması dışa aktarıldı.')} title="Şemayı İndir">
           <Download size={15} />
-          <span className={styles.btnText}>Dışa Aktar</span>
+          <span className={styles.btnText}>İndir</span>
         </button>
 
         <button className={styles.primaryToolBtn} onClick={() => setShowAddModal(true)}>
@@ -417,23 +500,16 @@ export function FamilyTreeViewer() {
         }}
       >
         <svg className={styles.connectionsSvg} width="3200" height="2400">
-          {/* Marriage connection (Mustafa & Ayşe) */}
           <path d="M 620 160 L 660 160" className={styles.marriageLine} />
-          
-          {/* Generation 1 to Generation 2 (Branching line) */}
           <path d="M 640 160 L 640 240 L 430 240 L 430 340" className={styles.lineageLine} />
           <path d="M 640 240 L 850 240 L 850 340" className={styles.lineageLine} />
-
-          {/* Ali Yılmaz to Children (Ahmet & Elif) */}
           <path d="M 430 460 L 430 510 L 310 510 L 310 580" className={styles.lineageLine} />
           <path d="M 430 510 L 550 510 L 550 580" className={styles.lineageLine} />
-
-          {/* Zeynep to Child (Can) */}
           <path d="M 850 460 L 850 580" className={styles.lineageLine} />
         </svg>
 
         {/* 4. TREE NODES (CARDS) */}
-        {treeData.map(node => {
+        {visibleNodes.map(node => {
           const isSelected = selectedNode?.id === node.id;
           return (
             <div
@@ -444,6 +520,11 @@ export function FamilyTreeViewer() {
             >
               <div className={styles.nodeHeader}>
                 <span className={styles.nodeGenBadge}>{node.generation}. Kuşak</span>
+                {node.isVerified && (
+                  <span title="Nüfus Kütüğü Doğrulandı" style={{ color: 'var(--accent-emerald)', display: 'flex', alignItems: 'center' }}>
+                    <CheckCircle2 size={12} />
+                  </span>
+                )}
                 {node.relationRole && (
                   <span style={{ fontSize: '0.66rem', color: 'var(--brand-primary)', fontWeight: 600 }}>
                     {node.relationRole.split(' ')[0]}
@@ -491,6 +572,11 @@ export function FamilyTreeViewer() {
               <h3 className={styles.drawerName}>{selectedNode.name}</h3>
               <p className={styles.drawerJob}>{selectedNode.job}</p>
               <span className={styles.drawerYears}>{selectedNode.years}</span>
+              {selectedNode.cemetery && (
+                <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+                  <MapPin size={11} /> {selectedNode.cemetery}
+                </span>
+              )}
             </div>
           </div>
 
@@ -501,11 +587,11 @@ export function FamilyTreeViewer() {
             </Link>
             
             <Link 
-              href={`/ai-chat?q=${encodeURIComponent(`${selectedNode.name} hakkında arşivde ne kayıt var?`)}`} 
+              href={`/ai-chat?q=${encodeURIComponent(`${selectedNode.name} hakkında arşivde ne kayıt var ve akrabalık bağı nedir?`)}`} 
               className={styles.drawerSecondaryBtn}
             >
               <Sparkles size={14} />
-              <span>Yapay Zekâya Sor</span>
+              <span>Akrabalık & AI Sor</span>
             </Link>
           </div>
         </div>

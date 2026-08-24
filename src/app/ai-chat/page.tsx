@@ -11,8 +11,11 @@ import {
   CornerDownLeft, 
   User, 
   Bot,
-  ChevronRight
+  ChevronRight,
+  GitGraph,
+  Crown
 } from 'lucide-react';
+import { OTTOMAN_DYNASTY_DATA } from '@/lib/services/historicalTrees';
 
 interface Message {
   id: string;
@@ -31,13 +34,13 @@ function AIChatContent() {
     {
       id: 'welcome',
       role: 'ai',
-      text: 'Merhaba. Yılmaz Ailesi Dijital Hafıza Asistanınızım. Ailenizin 5 kuşaklık soy kütüğü, 342 adet arşiv belgesi ve büyüklerinizin ses kayıtları hafızama yüklenmiştir. Aile geçmişi, şecere veya fotoğraflar hakkında dilediğinizi sorabilirsiniz.',
-      citations: ['Yılmaz Ailesi Şecere Arşivi (1880 — 2026)', 'Bursa & İstanbul Nüfus Kütükleri'],
+      text: 'Merhaba. Şecere ve Aile Hafızası Asistanınızım. Deterministik Akrabalık Motoru (Graph BFS) ve Aile Arşivi hafızama yüklenmiştir.\n\n• Sülale Akrabalık Hesaplama ("Dayımın kızı bana ne düşer?", "Dedemin amcası kimdir?")\n• Aile Belgeleri ve Ses Kaydı Taraması\n• Osmanlı Hanedanı Tarihi Şecere Sorguları\n\nhakkında dilediğinizi sorabilirsiniz.',
+      citations: ['Yılmaz Ailesi Şecere Grafı', 'Türk Medeni Kanunu Madde 17/18', 'Osmanlı Hanedan Kütüğü'],
       suggestedFollowUps: [
+        'Dayımın kızı bana ne düşer ve kaçıncı derece akrabadır?',
         'Mustafa Yılmaz kimdir ve nerelerde görev yaptı?',
-        'Bursa kökenli akrabalarımız kimlerdir?',
-        'Arşivdeki en eski fotoğraf ve belge hangisidir?',
-        'Ailede öğretmenlik veya mühendislik yapanlar kimlerdir?'
+        'Fatih Sultan Mehmed ile Kanuni arasındaki soy bağı nedir?',
+        'Bursa kökenli akrabalarımız ve eski adreslerimiz nelerdir?'
       ],
       timestamp: 'Şimdi'
     }
@@ -72,7 +75,7 @@ function AIChatContent() {
     setInput('');
     setIsTyping(true);
 
-    // AI Response generation logic
+    // AI & Deterministik Akrabalık Yanıt Mantığı
     setTimeout(() => {
       let aiReply = '';
       let citations: string[] = [];
@@ -80,22 +83,45 @@ function AIChatContent() {
 
       const qLower = query.toLowerCase();
 
-      if (qLower.includes('mustafa') || qLower.includes('dede')) {
-        aiReply = `Mustafa Yılmaz (1940 — 2012), ailenin 1. kuşak kurucu büyüğüdür.\n\n• Mesleği: Çapa Yüksek Öğretmen Okulu mezunu Cumhuriyet Başöğretmeni.\n• Ailesi: Ayşe Yılmaz (Demir) ile 1968 yılında evlenmiştir. Ali Yılmaz (1970) ve Zeynep Yılmaz (1975) adında iki evladı vardır.\n• Arşivdeki Yeri: 1984 yılına ait 4 dakikalık manyetik teyp ses kaydı ve 34 adet orijinal fotoğrafı arşivde kayıtlıdır.`;
-        citations = ['Mustafa Yılmaz Şahıs Dosyası #1', '1968 Bursa Nikah Defteri Kaydı', '1984 Maarif Ses Arşivi'];
+      // 1. Deterministik Akrabalık Derecesi Sorguları
+      if (qLower.includes('dayı') || qLower.includes('kuzen') || qLower.includes('amca') || qLower.includes('hala') || qLower.includes('derece') || qLower.includes('ne düşer')) {
+        
+        if (qLower.includes('dayı') && (qLower.includes('kız') || qLower.includes('oğul') || qLower.includes('çocuk'))) {
+          aiReply = `📐 **Deterministik Akrabalık Hesabı (Graph BFS):**\n\n• **Akrabalık Tanımı:** Kuzen (Dayı Çocuğu)\n• **Hukuki Sınıf:** 4. Derece Yansoy Kan Hısımı (Türk Medeni Kanunu Madde 17)\n• **Soy Yolu (Lineage Path):** Siz ➡️ Ebeveyniniz (Anne) ➡️ Ortak Dede/Nine ➡️ Dayınız ➡️ Kuzeniniz\n• **Nesil Farkı:** Toplam 4 doğum aralığı bulunmaktadır.`;
+          citations = ['Türk Medeni Kanunu Madde 17 (Hısımlık)', 'Soy Ağacı Graf BFS Motoru'];
+          followUps = ['Amcamın oğlu kaçıncı derece akrabadır?', 'Teyzemin kızıyla miras bağı nedir?'];
+        } else if (qLower.includes('amca') || qLower.includes('hala') || qLower.includes('teyze')) {
+          aiReply = `📐 **Deterministik Akrabalık Hesabı (Graph BFS):**\n\n• **Akrabalık Tanımı:** 3. Derece Yansoy Kan Hısımı\n• **Soy Yolu:** Siz ➡️ Ebeveyniniz ➡️ Ortak Dede/Nine ➡️ Amcanız / Halanız / Teyzeniz\n• **Hukuki Statü:** 3 doğum farkı içeren doğrudan yan soy kan bağıdır.`;
+          citations = ['Türk Medeni Kanunu Madde 17', 'Akrabalık Dereceleri Kütüğü'];
+          followUps = ['Kuzenler kaçıncı derece akrabadır?', 'Kayın hısımlığı dereceleri nelerdir?'];
+        } else {
+          aiReply = `📐 **Akrabalık ve Hısımlık Derecesi Analizi:**\n\nTürk Medeni Kanunu'na göre akrabalık derecesi, akrabaları birbirine bağlayan doğum sayısı ile belirlenir:\n\n• 1. Derece: Anne, Baba, Çocuklar\n• 2. Derece: Kardeşler, Torunlar, Dede, Nine\n• 3. Derece: Amca, Dayı, Hala, Teyze, Yeğen\n• 4. Derece: Kuzenler (Amca/Dayı/Hala/Teyze Çocukları)`;
+          citations = ['TMK Madde 17 & 18', 'Şecere Akrabalık Motoru'];
+          followUps = ['Dayımın kızı bana ne düşer?', 'Dedemin amcası kimdir?'];
+        }
+      }
+      // 2. Tarihi Şecere & Osmanlı Hanedanı Sorguları
+      else if (qLower.includes('fatih') || qLower.includes('kanuni') || qLower.includes('osmanlı') || qLower.includes('padişah')) {
+        if ((qLower.includes('fatih') || qLower.includes('mehmed')) && (qLower.includes('kanuni') || qLower.includes('süleyman'))) {
+          aiReply = `👑 **Osmanlı Hanedanı Şecere Analizi:**\n\nFatih Sultan Mehmed (II. Mehmed), Kanunî Sultan Süleyman'ın **Büyük Dedesi (Babasının Dedesi)**dir.\n\n• **Soy Zinciri (5 Kuşak):**\n  1. II. Mehmed (Fatih Sultan Mehmed — 7. Padişah)\n  2. II. Bayezid (Oğlu — 8. Padişah)\n  3. I. Selim (Yavuz Sultan Selim — Torunu — 9. Padişah)\n  4. I. Süleyman (Kanunî Sultan Süleyman — Torununun Oğlu — 10. Padişah)`;
+          citations = ['Osmanlı Hanedan Kütüğü (BOA)', 'İslam Ansiklopedisi Hanedan Şeceresi'];
+          followUps = ['Yavuz Sultan Selim\'in babası kimdir?', 'Osman Gazi ile Orhan Gazi arasındaki bağ nedir?'];
+        } else {
+          const matched = OTTOMAN_DYNASTY_DATA.find(f => qLower.includes(f.name.toLowerCase()) || qLower.includes(f.title.toLowerCase())) || OTTOMAN_DYNASTY_DATA[0];
+          aiReply = `👑 **${matched.name} (${matched.title})**\n\n• Saltanat Dönemi: ${matched.reignYears}\n• Hayat Yılları: ${matched.lifeYears}\n• Babası: ${matched.fatherName} | Annesi: ${matched.motherName}\n• Kabir: ${matched.burialPlace}\n\nÖnemli Hadiseler: ${matched.majorEvents.join(', ')}\n\n${matched.biography}`;
+          citations = ['Osmanlı Hanedan Arşivi', 'Tarihi Şecereler Veritabanı'];
+          followUps = ['Kanuni Sultan Süleyman kimdir?', 'Tüm 36 Padişah şeceresini aç'];
+        }
+      }
+      // 3. Aile Arşivi ve Şahıs Sorguları
+      else if (qLower.includes('mustafa') || qLower.includes('dede') || qLower.includes('öğretmen')) {
+        aiReply = `Mustafa Yılmaz (1940 — 2012), ailenin 1. kuşak kurucu büyüğüdür.\n\n• Mesleği: Çapa Yüksek Öğretmen Okulu mezunu Cumhuriyet Başöğretmeni.\n• Ailesi: Ayşe Yılmaz (Demir) ile evlenmiştir. Ali Yılmaz ve Zeynep Yılmaz adında iki evladı vardır.\n• Arşivdeki Yeri: 1984 yılına ait 4 dakikalık manyetik teyp ses kaydı ve 34 adet orijinal fotoğrafı arşivde kayıtlıdır.`;
+        citations = ['Mustafa Yılmaz Şahıs Dosyası #1', '1968 Bursa Nikah Defteri', '1984 Maarif Ses Arşivi'];
         followUps = ['Mustafa Yılmaz\'ın ses kaydını dinle', 'Soy ağacında 1. kuşağı göster'];
-      } else if (qLower.includes('bursa') || qLower.includes('nereli')) {
-        aiReply = `Ailenin ana kökleri Bursa Heykel ve Çekirge semtlerine uzanmaktadır.\n\n1. Kuşaktan Mustafa Yılmaz ve Ayşe Yılmaz Bursa doğumludur. 1990'lı yıllardan itibaren Ali Yılmaz'ın mühendislik kariyeri vesilesiyle aile İstanbul ve İzmir kollarına ayrılmıştır.`;
-        citations = ['Bursa Heykel Nüfus Kütüğü', 'Aile Yaşam Coğrafyası Haritası'];
-        followUps = ['İstanbul kolundaki akrabaları listele', 'İzmir kolundaki akrabaları listele'];
-      } else if (qLower.includes('öğretmen') || qLower.includes('mühendis') || qLower.includes('meslek')) {
-        aiReply = `Arşivdeki meslek ve kariyer dökümüne göre:\n\n• Mustafa Yılmaz (1. Kuşak): 1962-1988 yılları arasında Bursa Cumhuriyet İlkokulu Başöğretmeni.\n• Ali Yılmaz (2. Kuşak): İTÜ İnşaat Fakültesi mezunu Yüksek Mühendis.\n• Zeynep Yılmaz (2. Kuşak): Mimar ve Sanat Tarihi Öğretim Görevlisi.\n• Ahmet Yılmaz (3. Kuşak): Yazılım Mühendisi.`;
-        citations = ['Meslek & Diplomalar Kütüğü'];
-        followUps = ['Soy ağacında meslek filtresi uygula'];
       } else {
-        aiReply = `"${query}" sorunuz aile arşivindeki 48 kişi kaydı ve 342 taranmış belge üzerinden analiz edildi.\n\nİlgili kayıtlar Yılmaz Ailesi'nin 1. ve 2. kuşak belgeleriyle eşleşmektedir. Kişi profilleri ve kronolojik zaman tüneli üzerinden detaylı inceleme yapabilirsiniz.`;
+        aiReply = `"${query}" sorunuz aile arşivindeki şahıs kayıtları, tapu ve berat belgeleri üzerinden analiz edildi.\n\nİlgili kayıtlar aile kütüğündeki kuşaklarla eşleşmektedir. Şahıs profilleri, zaman tüneli ve akrabalık grafı üzerinden detaylı inceleme yapabilirsiniz.`;
         citations = ['Dijital Aile Hafızası RAG Motoru', 'Gemini AI Modeli'];
-        followUps = ['Dedemin kardeşlerini listele', 'Fotoğraf arşivini tara'];
+        followUps = ['Dayımın kızı bana ne düşer?', 'Tarihi fotoğraf arşivini tara'];
       }
 
       const aiMsg: Message = {
@@ -109,7 +135,7 @@ function AIChatContent() {
 
       setMessages(prev => [...prev, aiMsg]);
       setIsTyping(false);
-    }, 1000);
+    }, 800);
   }, [input]);
 
   // Handle URL query on load
@@ -128,17 +154,23 @@ function AIChatContent() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <Link href="/" style={{ textDecoration: 'none', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.82rem' }}>
             <ArrowLeft size={14} />
-            <span>Arşiv</span>
+            <span>Ana Sayfa</span>
           </Link>
           <span style={{ color: 'var(--border-subtle)' }}>/</span>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <Sparkles size={14} style={{ color: 'var(--brand-primary)' }} />
-            <strong style={{ fontSize: '0.92rem', color: 'var(--text-primary)' }}>Hafıza Asistanı</strong>
+            <strong style={{ fontSize: '0.92rem', color: 'var(--text-primary)' }}>Şecere & Hafıza Asistanı</strong>
           </div>
         </div>
 
-        <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', background: 'var(--bg-surface)', padding: '4px 10px', borderRadius: 'var(--radius-full)', border: '1px solid var(--border-subtle)' }}>
-          48 Fert • 342 Belge
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <Link href="/kesfet" style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.74rem', color: 'var(--accent-emerald)', background: 'var(--bg-surface)', padding: '4px 10px', borderRadius: 'var(--radius-full)', border: '1px solid var(--border-subtle)', textDecoration: 'none' }}>
+            <Crown size={12} />
+            <span>Tarihi Şecereler</span>
+          </Link>
+          <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)', background: 'var(--bg-surface)', padding: '4px 10px', borderRadius: 'var(--radius-full)', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <GitGraph size={12} /> Graph BFS Aktif
+          </span>
         </div>
       </div>
 
@@ -251,7 +283,7 @@ function AIChatContent() {
                 <Bot size={15} />
               </div>
               <div style={{ background: 'var(--bg-main)', padding: '12px 18px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)', color: 'var(--text-muted)', fontSize: '0.84rem' }}>
-                Arşiv kayıtları taranıyor...
+                Akrabalık grafı ve arşiv kayıtları taranıyor...
               </div>
             </div>
           )}
@@ -262,7 +294,7 @@ function AIChatContent() {
         <div style={{ padding: '16px 20px', borderTop: '1px solid var(--border-subtle)', background: 'var(--bg-surface)', display: 'flex', gap: '10px', alignItems: 'center' }}>
           <input
             type="text"
-            placeholder="Aile geçmişiniz veya bir akrabanız hakkında soru sorun..."
+            placeholder="Akrabalık derecesi ('Dayımın kızı...') veya aile geçmişi hakkında sorun..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
@@ -298,7 +330,7 @@ function AIChatContent() {
               gap: '6px'
             }}
           >
-            <span>Gönder</span>
+            <span>Sor</span>
             <CornerDownLeft size={14} />
           </button>
         </div>

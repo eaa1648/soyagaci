@@ -17,7 +17,10 @@ import {
   User, 
   Shield, 
   LogIn,
-  Edit3
+  Edit3,
+  Crown,
+  BookOpen,
+  FileSpreadsheet
 } from 'lucide-react';
 import { getCurrentUser, logoutUser, updateFamilyName, UserProfile } from '@/lib/services/authService';
 
@@ -81,8 +84,10 @@ export function Navbar() {
   const loggedInNavLinks = [
     { href: '/', label: 'Arşiv', icon: Search },
     { href: '/tree', label: 'Soy Ağacı', icon: GitGraph },
+    { href: '/kesfet', label: 'Tarihi Şecereler', icon: Crown },
     { href: '/ai-chat', label: 'Hafıza Asistanı', icon: MessageSquareText },
     { href: '/family-vault', label: 'Aile Kasası', icon: Landmark },
+    { href: '/rehber', label: 'Rehberler', icon: BookOpen },
     { href: '/admin', label: 'Yönetim', icon: ShieldAlert },
   ];
 
@@ -129,9 +134,17 @@ export function Navbar() {
                 <GitGraph size={16} className={styles.navIcon} />
                 <span>Örnek Soyağacı</span>
               </Link>
-              <Link href="/ai-chat" className={styles.navItem}>
-                <MessageSquareText size={16} className={styles.navIcon} />
-                <span>Yapay Zekâ Hafıza</span>
+              <Link href="/kesfet" className={styles.navItem}>
+                <Crown size={16} className={styles.navIcon} />
+                <span>Osmanlı Hanedanı</span>
+              </Link>
+              <Link href="/rehber" className={styles.navItem}>
+                <BookOpen size={16} className={styles.navIcon} />
+                <span>Rehberler</span>
+              </Link>
+              <Link href="/import/e-devlet" className={styles.navItem}>
+                <FileSpreadsheet size={16} className={styles.navIcon} />
+                <span>e-Devlet Aktar</span>
               </Link>
             </nav>
           )}
@@ -230,6 +243,15 @@ export function Navbar() {
                       </Link>
 
                       <Link 
+                        href="/import/e-devlet" 
+                        onClick={() => setShowUserMenu(false)}
+                        style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 8px', borderRadius: 'var(--radius-xs)', color: 'var(--text-secondary)', fontSize: '0.8rem', textDecoration: 'none' }}
+                      >
+                        <FileSpreadsheet size={14} />
+                        <span>e-Devlet Aktarım</span>
+                      </Link>
+
+                      <Link 
                         href="/login" 
                         onClick={() => setShowUserMenu(false)}
                         style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 8px', borderRadius: 'var(--radius-xs)', color: 'var(--text-secondary)', fontSize: '0.8rem', textDecoration: 'none' }}
@@ -269,7 +291,7 @@ export function Navbar() {
       {/* Mobile Bottom Navigation */}
       {currentUser && (
         <nav className={styles.mobileNav}>
-          {loggedInNavLinks.map(({ href, label, icon: Icon }) => {
+          {loggedInNavLinks.slice(0, 5).map(({ href, label, icon: Icon }) => {
             const isActive = pathname === href || (href !== '/' && pathname.startsWith(href));
             return (
               <Link
