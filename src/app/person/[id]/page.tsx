@@ -85,7 +85,7 @@ export default function PersonProfilePage() {
       <div className={styles.topBackNav}>
         <Link href="/" className={styles.backLink}>
           <ArrowLeft size={15} />
-          <span>Arşive Dön</span>
+          <span>Ana Sayfaya Dön</span>
         </Link>
       </div>
 

@@ -46,7 +46,7 @@ export default function FamilyVaultPage() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Link href="/" style={{ textDecoration: 'none', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.82rem' }}>
             <ArrowLeft size={14} />
-            <span>Arşiv</span>
+            <span>Ana Sayfa</span>
           </Link>
           <span style={{ color: 'var(--border-subtle)' }}>/</span>
           <span style={{ fontSize: '0.82rem', color: 'var(--text-primary)', fontWeight: 500 }}>Ortak Aile Kasası</span>

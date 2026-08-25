@@ -18,7 +18,8 @@ import {
   Crown,
   FileSpreadsheet,
   CheckCircle2,
-  MapPin
+  MapPin,
+  ArrowLeft
 } from 'lucide-react';
 import { getPersons, savePerson, PersonRecord } from '@/lib/services/personService';
 
@@ -403,6 +404,14 @@ export function FamilyTreeViewer() {
       {/* 1. TOP TOOLBAR */}
       <div className={styles.toolbar}>
         
+        {/* Ana Sayfaya Dön */}
+        <Link href="/" className={styles.toolBtn} title="Ana Sayfaya Dön" style={{ textDecoration: 'none', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', background: 'var(--bg-surface-raised)' }}>
+          <ArrowLeft size={14} />
+          <span className={styles.btnText}>Ana Sayfa</span>
+        </Link>
+
+        <div className={styles.toolbarDivider} />
+
         {/* Search in tree */}
         <div className={styles.searchBox}>
           <Search size={14} className={styles.searchIcon} />

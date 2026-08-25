@@ -43,7 +43,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         <Link href="/" style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
           <ArrowLeft size={14} />
-          <span>Arşive Dön</span>
+          <span>Ana Sayfaya Dön</span>
         </Link>
       </div>
 

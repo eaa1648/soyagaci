@@ -53,7 +53,7 @@ export default function MediaUploadPage() {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
         <Link href="/" style={{ textDecoration: 'none', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem' }}>
           <ArrowLeft size={14} />
-          <span>Arşive Dön</span>
+          <span>Ana Sayfaya Dön</span>
         </Link>
         <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>Yeni Arşiv Kaydı</span>
       </div>
