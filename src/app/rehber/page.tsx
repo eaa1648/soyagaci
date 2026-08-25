@@ -4,6 +4,7 @@ import React from 'react';
 import { Card } from '@/components/ui/card';
 import Link from 'next/link';
 import { BookOpen, ArrowRight, ArrowLeft, FileText, Landmark, Compass, Award } from 'lucide-react';
+import { GooglePreferredSourceButton } from '@/components/seo/GooglePreferredSource';
 
 export const GUIDES_DATA = [
   {
@@ -81,17 +82,22 @@ export default function GuidesIndexPage() {
   return (
     <div style={{ maxWidth: '1040px', margin: '0 auto', padding: '32px 24px 80px 24px' }}>
       
-      {/* Top Breadcrumb */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
-        <Link href="/" style={{ textDecoration: 'none', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem' }}>
-          <ArrowLeft size={14} />
-          <span>Ana Sayfa</span>
-        </Link>
-        <span style={{ fontSize: '0.8rem', color: 'var(--brand-primary)', fontWeight: 600 }}>Aile Tarihi Araştırma Merkezi</span>
+      {/* Top Breadcrumb & Preferred Badge */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Link href="/" style={{ textDecoration: 'none', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem' }}>
+            <ArrowLeft size={14} />
+            <span>Ana Sayfa</span>
+          </Link>
+          <span style={{ color: 'var(--border-subtle)' }}>/</span>
+          <span style={{ fontSize: '0.8rem', color: 'var(--brand-primary)', fontWeight: 600 }}>Aile Tarihi Araştırma Merkezi</span>
+        </div>
+
+        <GooglePreferredSourceButton variant="badge" />
       </div>
 
       {/* Hero Header */}
-      <div style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto 48px auto' }}>
+      <div style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto 36px auto' }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 14px', borderRadius: 'var(--radius-full)', background: 'var(--brand-surface)', color: 'var(--brand-primary)', fontSize: '0.76rem', fontWeight: 600, marginBottom: '16px' }}>
           <BookOpen size={14} />
           <span>ŞECERE & AİLE TARİHİ KÜTÜPHANESİ</span>
@@ -102,6 +108,15 @@ export default function GuidesIndexPage() {
         <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
           e-Devlet belgelerinden Osmanlı Nüfus Defterlerine, mezarlık araştırmalarından akrabalık derecelerine kadar eksiksiz aile tarihi rehberleri.
         </p>
+      </div>
+
+      {/* Google Preferred Source Banner */}
+      <div style={{ maxWidth: '800px', margin: '0 auto 36px auto' }}>
+        <GooglePreferredSourceButton 
+          variant="card"
+          title="Google Arama ve Keşfet’te Şecere Rehberlerini Öncelikli Yapın"
+          description="Google hesabınızda 'Tercih Edilen Kaynak' olarak ekleyin; yeni soy araştırması rehberleri ve arşiv incelemeleri Keşfet akışınızda ve AI arama özetlerinizde doğrudan öne çıksın."
+        />
       </div>
 
       {/* Guides Grid */}

@@ -1,0 +1,199 @@
+.cardContainer {
+  padding: 24px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 32px 0;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.googleBrandBadge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+}
+
+.activePill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: var(--accent-emerald-bg);
+  color: var(--accent-emerald);
+  font-size: 0.72rem;
+  font-weight: 600;
+  border: 1px solid var(--accent-emerald);
+}
+
+.cardTitle {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 6px 0;
+}
+
+.cardDesc {
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0 0 14px 0;
+}
+
+.benefitsRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.benefitItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.76rem;
+  color: var(--text-muted);
+}
+
+.benefitItem svg {
+  color: var(--brand-primary);
+}
+
+.primaryGoogleBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  height: 44px;
+  background: var(--bg-surface-raised);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: 0.86rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.primaryGoogleBtn:hover {
+  background: var(--bg-main);
+  border-color: var(--brand-primary);
+  transform: translateY(-1px);
+}
+
+.preferredSaved {
+  background: var(--brand-surface) !important;
+  border-color: rgba(217, 119, 6, 0.4) !important;
+  color: var(--brand-primary) !important;
+}
+
+.toastNotice {
+  padding: 10px 14px;
+  background: var(--accent-emerald-bg);
+  border: 1px solid var(--accent-emerald);
+  border-radius: var(--radius-sm);
+  color: var(--accent-emerald);
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: fadeIn 0.2s ease;
+}
+
+/* Inline Variant */
+.inlineBox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  gap: 12px;
+  margin: 16px 0;
+  flex-wrap: wrap;
+}
+
+.inlineContent {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.inlineText {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.actionBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--brand-primary);
+  color: #FFFFFF;
+  border: none;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.actionActive {
+  background: var(--accent-emerald);
+}
+
+/* Badge Variant */
+.badgeBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  font-size: 0.74rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.badgeBtn:hover {
+  border-color: var(--border-medium);
+  background: var(--bg-surface-raised);
+}
+
+.badgeActive {
+  background: var(--brand-surface);
+  border-color: rgba(217, 119, 6, 0.3);
+  color: var(--brand-primary);
+  font-weight: 600;
+}
+
+.checkIcon {
+  color: var(--accent-emerald);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}

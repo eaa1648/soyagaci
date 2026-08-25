@@ -8,6 +8,7 @@ import { Card } from '@/components/ui/card';
 import Link from 'next/link';
 import { getPersons, PersonRecord, SEED_PERSONS } from '@/lib/services/personService';
 import { getCurrentUser, UserProfile } from '@/lib/services/authService';
+import { GooglePreferredSourceButton } from '@/components/seo/GooglePreferredSource';
 import { 
   Users, 
   FileText, 
@@ -160,6 +161,15 @@ export default function Home() {
             </Card>
 
           </div>
+        </section>
+
+        {/* Google Preferred Source Promotion Banner */}
+        <section style={{ maxWidth: '840px', margin: '0 auto 40px auto' }}>
+          <GooglePreferredSourceButton 
+            variant="card"
+            title="Google Arama & Keşfet’te Şecere’yi Tercih Edin"
+            description="Google Arama, Keşfet (Discover) ve Gemini AI Overviews yapay zekâ yanıtlarında şecere araştırmaları ve arşiv rehberlerinde Şecere.app’i öncelikli kaynak olarak kaydedin."
+          />
         </section>
 
         {/* 3 Step Onboarding */}
